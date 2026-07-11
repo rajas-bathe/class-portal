@@ -1,8 +1,10 @@
 # 📚 Class Portal
 
-> **🚧 Work in Progress**
->
-> This project is currently under active development. Features, UI, and functionality may change frequently as new updates are implemented.
+## 🚧 Project Status
+
+Currently under active development.
+
+This repository is being built incrementally as part of my learning journey in React and modern frontend development. Features and UI will continue to evolve.
 
 ---
 A modern class portal built using **React**, **Vite**, and **Tailwind CSS** to provide students with quick access to academic resources and class information.
