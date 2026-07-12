@@ -11,8 +11,10 @@ function App() {
       <div className="flex flex-col h-screen">
         <MobileNavbar />
         <div className="flex flex-1 overflow-hidden">
+          {/* Sidebar - neutral-200 */}
           <SideBar />
-          <main className="flex-1 overflow-y-auto bg-gray-50">
+          {/* Main content background - neutral-300 */}
+          <main className="flex-1 overflow-y-auto bg-neutral-300">
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Dashboard />} />

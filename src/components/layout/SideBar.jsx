@@ -21,15 +21,17 @@ function SideBar() {
         />
       )}
 
-      {/* Sidebar */}
+      {/* Sidebar - Changed bg-white to bg-neutral-200 */}
       <aside className={`
-        fixed top-0 left-0 h-full w-64 bg-white shadow-2xl z-50
+        fixed top-0 left-0 h-full w-64 bg-neutral-200 shadow-2xl z-50
         transform transition-transform duration-300 ease-in-out
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0 lg:relative lg:shadow-lg
-      `}>
+      `}
+      >
+
         {/* Logo - Only visible on desktop (lg and above) */}
-        <div className="hidden lg:block p-6 border-b">
+        <div className="hidden lg:block p-6 border-b border-neutral-300">
           <Link to="/" className="flex items-center gap-3">
             <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
               <span className="text-white text-xl font-bold">CP</span>
@@ -42,17 +44,17 @@ function SideBar() {
         </div>
 
         {/* Close button - mobile only */}
-        <div className="p-4 border-b flex justify-between items-center lg:hidden">
+        <div className="p-4 border-b border-neutral-300 flex justify-between items-center lg:hidden">
           <h2 className="font-bold text-xl">Menu</h2>
           <button
             onClick={closeSidebar}
-            className="text-3xl hover:bg-gray-100 p-2 rounded-lg"
+            className="text-3xl hover:bg-neutral-300 p-2 rounded-lg"
           >
             ✕
           </button>
         </div>
 
-        {/* Navigation */}
+        {/* Navigation - Changed hover from blue-50 to neutral-300 */}
         <nav className="p-4">
           <ul className="space-y-2">
             {navItems.map((item) => (
@@ -60,7 +62,7 @@ function SideBar() {
                 <Link
                   to={item.path}
                   onClick={closeSidebar}
-                  className="block p-3 hover:bg-blue-50 rounded-lg transition-colors flex items-center gap-3"
+                  className="block p-3 hover:bg-neutral-300 rounded-lg transition-colors flex items-center gap-3"
                 >
                   <span className="text-xl">{item.icon}</span>
                   <span className="font-medium">{item.label}</span>
