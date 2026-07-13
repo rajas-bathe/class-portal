@@ -1,9 +1,16 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { SidebarProvider } from "./context/SidebarContext";
-import SideBar from "./components/layout/SideBar";
+//Importing Pages
 import Dashboard from "./pages/Dashboard";
+import Academics from "./pages/Academics"; 
+import Resources from "./pages/Resources";
+import Announcements from "./pages/Announcements";
+import Class from "./pages/Class";
+//Improting Components
+import SideBar from "./components/layout/SideBar";
 import MobileNavbar from "./components/layout/MobileNavbar";
-import Profile from "./pages/Profile";
+//Importing Context
+import { SidebarProvider } from "./context/SidebarContext";
+//Importing BrowserRouter
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 function App() {
   return (
@@ -18,7 +25,10 @@ function App() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/profile" element={<Profile />} />
+              <Route path="/academics" element={<Academics />} />
+              <Route path="/resources" element={<Resources />} />
+              <Route path="/announcements" element={<Announcements />} />
+              <Route path="/class" element={<Class />} />
             </Routes>
           </main>
         </div>

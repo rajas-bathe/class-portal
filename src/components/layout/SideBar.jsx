@@ -7,8 +7,10 @@ function SideBar() {
 
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: '📊' },
-    { path: '/profile', label: 'Profile', icon: '👤' },
-    { path: '/settings', label: 'Settings', icon: '⚙️' },
+    { path: '/academics', label: 'Academics', icon: '👤' },
+    { path: '/resources', label: 'Resoruces', icon: '⚙️' },
+    { path: '/announcements', label: 'Announcements', icon: '⚙️' },
+    { path: '/class', label: 'Class', icon: '⚙️' },
   ];
 
   return (
