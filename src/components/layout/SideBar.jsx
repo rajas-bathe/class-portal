@@ -8,9 +8,9 @@ function SideBar() {
   const navItems = [
     { path: '/dashboard', label: 'Dashboard', icon: '📊' },
     { path: '/academics', label: 'Academics', icon: '👤' },
-    { path: '/resources', label: 'Resoruces', icon: '⚙️' },
-    { path: '/announcements', label: 'Announcements', icon: '⚙️' },
-    { path: '/class', label: 'Class', icon: '⚙️' },
+    { path: '/resources', label: 'Resoruces', icon: '📁' },
+    { path: '/announcements', label: 'Announcements', icon: '📢' },
+    { path: '/class', label: 'Class', icon: '🎓' },
   ];
 
   return (
@@ -40,7 +40,6 @@ function SideBar() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-800">Class Portal</h1>
-              <p className="text-xs text-gray-500">Admin Dashboard</p>
             </div>
           </Link>
         </div>
