@@ -3,6 +3,9 @@ import { timetableData, days } from '../data/timetableData';
 
 function Academics() {
   const [currentTime, setCurrentTime] = useState(new Date());
+  
+  // 🆕 NEW: View mode state
+  const [viewMode, setViewMode] = useState('combined'); // 'lectures' | 'labs' | 'combined'
 
   // Update time every minute
   useEffect(() => {
@@ -58,13 +61,24 @@ function Academics() {
   // Check if item is a lab
   const isLab = (subject) => subject?.includes('Lab');
 
-  // Find item at specific day and time
+  // 🆕 NEW: Find item at specific day and time with filter
   const getItem = (day, time) => {
     const dayData = timetableData[day];
     if (!dayData) return null;
     
     const allItems = [...dayData.classes, ...dayData.labs];
     return allItems.find(item => item.time === time) || null;
+  };
+
+  // 🆕 NEW: Get filtered item based on view mode
+  const getFilteredItem = (day, time) => {
+    const item = getItem(day, time);
+    if (!item) return null;
+    
+    // Filter based on view mode
+    if (viewMode === 'lectures' && isLab(item.subject)) return null;
+    if (viewMode === 'labs' && !isLab(item.subject)) return null;
+    return item;
   };
 
   // Get today's day name
@@ -83,7 +97,14 @@ function Academics() {
     const dayData = timetableData[today];
     if (!dayData) return null;
     
-    const allItems = [...dayData.classes, ...dayData.labs];
+    let allItems = [...dayData.classes, ...dayData.labs];
+    
+    // 🆕 NEW: Filter next lecture based on view mode
+    if (viewMode === 'lectures') {
+      allItems = allItems.filter(item => !isLab(item.subject));
+    } else if (viewMode === 'labs') {
+      allItems = allItems.filter(item => isLab(item.subject));
+    }
     
     const upcoming = allItems
       .filter(item => {
@@ -98,13 +119,87 @@ function Academics() {
   const nextLecture = getNextLecture();
   const today = getToday();
 
+  // 🆕 NEW: View Toggle Component (inline for now)
+  const ViewToggle = () => (
+    <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
+      <button
+        onClick={() => setViewMode('lectures')}
+        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+          viewMode === 'lectures' 
+            ? 'bg-white text-blue-600 shadow-sm' 
+            : 'text-gray-600 hover:text-gray-800'
+        }`}
+      >
+        📚 Lectures
+      </button>
+      <button
+        onClick={() => setViewMode('labs')}
+        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+          viewMode === 'labs' 
+            ? 'bg-white text-purple-600 shadow-sm' 
+            : 'text-gray-600 hover:text-gray-800'
+        }`}
+      >
+        🔬 Labs
+      </button>
+      <button
+        onClick={() => setViewMode('combined')}
+        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+          viewMode === 'combined' 
+            ? 'bg-white text-green-600 shadow-sm' 
+            : 'text-gray-600 hover:text-gray-800'
+        }`}
+      >
+        📊 Combined
+      </button>
+    </div>
+  );
+
+  // 🆕 NEW: Today's Schedule Component (inline for now)
+  const TodaysSchedule = () => {
+    const dayData = timetableData[today];
+    if (!dayData) return null;
+    
+    let allItems = [...dayData.classes, ...dayData.labs];
+    
+    // Filter based on view mode
+    if (viewMode === 'lectures') {
+      allItems = allItems.filter(item => !isLab(item.subject));
+    } else if (viewMode === 'labs') {
+      allItems = allItems.filter(item => isLab(item.subject));
+    }
+    
+    if (allItems.length === 0) return null;
+
+    return (
+      <div className="bg-white rounded-xl shadow-sm p-3">
+        <h3 className="text-xs font-semibold text-gray-700 mb-2">📅 Today's Schedule</h3>
+        <div className="flex flex-wrap gap-2">
+          {allItems.map((item, i) => (
+            <span key={i} className="px-2 py-1 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium">
+              {item.time} • {item.subject}
+            </span>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="p-4 max-w-7xl mx-auto space-y-4">
-      {/* Header */}
+      {/* 🆕 CHANGED: Header with Toggle */}
       <div className="bg-white rounded-xl shadow-sm p-4">
-        <h1 className="text-2xl font-bold text-gray-800">📚 Timetable</h1>
-        <p className="text-gray-500 text-sm">Your weekly class schedule</p>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-800">📚 Timetable</h1>
+            <p className="text-gray-500 text-sm">Your weekly class schedule</p>
+          </div>
+          <ViewToggle />
+        </div>
       </div>
+
+      {/* 🆕 NEW: Today's Schedule Section */}
+      <TodaysSchedule />
 
       {/* Next Lecture - Priority at top */}
       {nextLecture ? (
@@ -179,9 +274,9 @@ function Academics() {
                       )}
                     </td>
 
-                    {/* Day Columns */}
+                    {/* 🆕 CHANGED: Day Columns - using getFilteredItem instead of getItem */}
                     {days.map((day) => {
-                      const item = getItem(day, time);
+                      const item = getFilteredItem(day, time); // 🆕 Changed here
                       const isToday = day === today;
                       
                       return (
