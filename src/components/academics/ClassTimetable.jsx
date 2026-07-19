@@ -1,32 +1,10 @@
 import React from 'react';
 
 function ClassTimetable({ classes = [] }) {
-  const getSubjectColor = (subject) => {
-    const colors = {
-      'Mathematics': 'bg-blue-50 border-blue-500',
-      'Science': 'bg-green-50 border-green-500',
-      'History': 'bg-purple-50 border-purple-500',
-      'English': 'bg-orange-50 border-orange-500',
-      'Art': 'bg-pink-50 border-pink-500',
-    };
-    return colors[subject] || 'bg-gray-50 border-gray-500';
-  };
-
-  const getSubjectEmoji = (subject) => {
-    const emojis = {
-      'Mathematics': '📐',
-      'Science': '🔬',
-      'History': '📜',
-      'English': '📚',
-      'Art': '🎨',
-    };
-    return emojis[subject] || '📖';
-  };
-
-  if (classes.length === 0) {
+  if (!classes || classes.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6 text-center">
-        <p className="text-gray-500">No classes scheduled</p>
+      <div className="text-center py-6">
+        <p className="text-gray-400">No classes scheduled</p>
       </div>
     );
   }
@@ -35,13 +13,10 @@ function ClassTimetable({ classes = [] }) {
     <div className="space-y-2">
       {classes.map((item) => (
         <div
-          key={item.id}
-          className={`
-            flex items-center gap-3 p-3 rounded-lg border-l-4
-            ${getSubjectColor(item.subject)}
-          `}
+          key={item.id || Math.random()}
+          className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-500"
         >
-          <span className="text-2xl">{getSubjectEmoji(item.subject)}</span>
+          <span className="text-2xl">📚</span>
           <div className="flex-1">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs font-bold bg-white px-2 py-0.5 rounded-full shadow-sm">

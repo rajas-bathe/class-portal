@@ -1,53 +1,62 @@
 import { useState, useMemo } from 'react';
 import { timetableData, days } from '../data/timetableData';
-
-// Helper functions directly in the hook
-const getDayItems = (day) => {
-  const data = timetableData[day] || { classes: [], labs: [] };
-  return [...data.classes, ...data.labs];
-};
-
-const getNextLecture = (dayItems) => {
-  const now = new Date();
-  const currentTime = now.toTimeString().slice(0, 5);
-  
-  const upcoming = dayItems
-    .filter(item => {
-      const startTime = item.time.split('-')[0];
-      return startTime > currentTime;
-    })
-    .sort((a, b) => a.time.localeCompare(b.time));
-  
-  return upcoming[0] || null;
-};
+import { 
+  getToday, 
+  isLab, 
+  getAllTimeSlots, 
+  getItem,
+  isCurrentTimeSlot 
+} from '../utils/timetableHelpers';
 
 export function useTimetable() {
-  const [selectedDay, setSelectedDay] = useState('Monday');
+  const [viewMode, setViewMode] = useState('combined');
 
-  // Memoized calculations
-  const dayItems = useMemo(() => getDayItems(selectedDay), [selectedDay]);
-  const nextLecture = useMemo(() => getNextLecture(dayItems), [dayItems]);
-  const todayData = useMemo(() => 
-    timetableData[selectedDay] || { classes: [], labs: [] }, 
-    [selectedDay]
-  );
+  const timeSlots = useMemo(() => getAllTimeSlots(), []);
+  const today = getToday();
 
-  // Stats
-  const stats = {
-    classes: todayData.classes.length,
-    labs: todayData.labs.length,
-    total: dayItems.length,
+  // Get filtered item based on view mode
+  const getFilteredItem = (day, time) => {
+    const item = getItem(day, time);
+    if (!item) return null;
+    
+    if (viewMode === 'lectures' && isLab(item.subject)) return null;
+    if (viewMode === 'labs' && !isLab(item.subject)) return null;
+    return item;
   };
 
-  // Actions
-  const selectDay = (day) => setSelectedDay(day);
+  // Get next lecture
+  const getNextLecture = () => {
+    const now = new Date();
+    const currentTimeStr = now.toTimeString().slice(0, 5);
+    
+    const dayData = timetableData[today];
+    if (!dayData) return null;
+    
+    let allItems = [...dayData.classes, ...dayData.labs];
+    
+    if (viewMode === 'lectures') {
+      allItems = allItems.filter(item => !isLab(item.subject));
+    } else if (viewMode === 'labs') {
+      allItems = allItems.filter(item => isLab(item.subject));
+    }
+    
+    const upcoming = allItems
+      .filter(item => item.time.split('-')[0] > currentTimeStr)
+      .sort((a, b) => a.time.localeCompare(b.time));
+    
+    return upcoming[0] || null;
+  };
+
+  const nextLecture = getNextLecture();
 
   return {
-    selectedDay,
-    dayItems,
+    viewMode,
+    setViewMode,
+    timeSlots,
+    today,
     nextLecture,
-    stats,
     days,
-    selectDay,
+    getFilteredItem,
+    isCurrentTimeSlot
   };
 }
