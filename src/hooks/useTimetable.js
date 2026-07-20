@@ -1,27 +1,30 @@
-import { useState, useMemo } from 'react';
-import { timetableData, days } from '../data/timetableData';
-import { 
-  getToday, 
-  isLab, 
-  getAllTimeSlots, 
-  getItem,
-  isCurrentTimeSlot 
-} from '../utils/timetableHelpers';
+import { useState } from 'react';
+import { timetableData, days, periods } from '../data/timetableData';
+import { getToday } from '../utils/timetableHelpers';
 
 export function useTimetable() {
   const [viewMode, setViewMode] = useState('combined');
 
-  const timeSlots = useMemo(() => getAllTimeSlots(), []);
   const today = getToday();
 
-  // Get filtered item based on view mode
-  const getFilteredItem = (day, time) => {
-    const item = getItem(day, time);
-    if (!item) return null;
+  // Get items for a specific day and period
+  const getItemsForPeriod = (day, time) => {
+    const dayData = timetableData[day];
+    if (!dayData) return [];
+    return dayData.classes.filter(item => item.time === time);
+  };
+
+  // Get filtered items based on view mode
+  const getFilteredItemsForPeriod = (day, time) => {
+    const items = getItemsForPeriod(day, time);
     
-    if (viewMode === 'lectures' && isLab(item.subject)) return null;
-    if (viewMode === 'labs' && !isLab(item.subject)) return null;
-    return item;
+    if (viewMode === 'lectures') {
+      return items.filter(item => !item.subject.includes('Lab'));
+    }
+    if (viewMode === 'labs') {
+      return items.filter(item => item.subject.includes('Lab'));
+    }
+    return items;
   };
 
   // Get next lecture
@@ -32,12 +35,12 @@ export function useTimetable() {
     const dayData = timetableData[today];
     if (!dayData) return null;
     
-    let allItems = [...dayData.classes, ...dayData.labs];
+    let allItems = dayData.classes;
     
     if (viewMode === 'lectures') {
-      allItems = allItems.filter(item => !isLab(item.subject));
+      allItems = allItems.filter(item => !item.subject.includes('Lab'));
     } else if (viewMode === 'labs') {
-      allItems = allItems.filter(item => isLab(item.subject));
+      allItems = allItems.filter(item => item.subject.includes('Lab'));
     }
     
     const upcoming = allItems
@@ -52,11 +55,10 @@ export function useTimetable() {
   return {
     viewMode,
     setViewMode,
-    timeSlots,
+    periods,
     today,
     nextLecture,
     days,
-    getFilteredItem,
-    isCurrentTimeSlot
+    getFilteredItemsForPeriod,
   };
 }

@@ -1,67 +1,107 @@
-import { timetableData } from '../data/timetableData';
+import { periods } from '../data/timetableData';
 
-// Get all time slots from all days
-export const getAllTimeSlots = () => {
-  const timeSet = new Set();
-  Object.values(timetableData).forEach(day => {
-    [...day.classes, ...day.labs].forEach(item => {
-      timeSet.add(item.time);
-    });
-  });
-  return Array.from(timeSet).sort();
+// ----- PERIOD HELPERS -----
+
+export const getAllPeriods = () => periods;
+
+export const isCurrentPeriod = (time) => {
+  const now = new Date();
+  const currentTimeStr = now.toTimeString().slice(0, 5);
+  const [start, end] = time.split('-');
+  return start <= currentTimeStr && end >= currentTimeStr;
 };
 
-// Get color for subject
+// ----- SUBJECT HELPERS -----
+
+export const getSubjectShort = (subject) => {
+  const shorts = {
+    'Microprocessor': 'MP',
+    'Operating System': 'OS',
+    'Foundation of Embedded System': 'FES',
+    'Engineering Career Navigation': 'ECN',
+    'Indian Philosophical Systems': 'IKS: IPS',
+    'Sanskrit and Computational Linguistics': 'IKS: SCL',
+  };
+  return shorts[subject] || subject;
+};
+
 export const getSubjectColor = (subject) => {
   const colors = {
-    'Mathematics': 'bg-blue-100 text-blue-800',
-    'Science': 'bg-green-100 text-green-800',
-    'History': 'bg-purple-100 text-purple-800',
-    'English': 'bg-orange-100 text-orange-800',
-    'Art': 'bg-pink-100 text-pink-800',
-    'Physics Lab': 'bg-indigo-100 text-indigo-800',
-    'Chemistry Lab': 'bg-teal-100 text-teal-800',
-    'Biology Lab': 'bg-rose-100 text-rose-800',
+    'Microprocessor': 'bg-blue-50 border-blue-500 text-blue-700',
+    'Operating System': 'bg-green-50 border-green-500 text-green-700',
+    'Foundation of Embedded System': 'bg-purple-50 border-purple-500 text-purple-700',
+    'Engineering Career Navigation': 'bg-orange-50 border-orange-500 text-orange-700',
+    'Indian Philosophical Systems': 'bg-indigo-50 border-indigo-500 text-indigo-700',
+    'Sanskrit and Computational Linguistics': 'bg-rose-50 border-rose-500 text-rose-700',
   };
-  return colors[subject] || 'bg-gray-100 text-gray-800';
+  return colors[subject] || 'bg-gray-50 border-gray-500 text-gray-700';
 };
 
-// Get emoji for subject
 export const getEmoji = (subject) => {
   const emojis = {
-    'Mathematics': '📐',
-    'Science': '🔬',
-    'History': '📜',
-    'English': '📚',
-    'Art': '🎨',
-    'Physics Lab': '⚛️',
-    'Chemistry Lab': '🧪',
-    'Biology Lab': '🧬',
+    'Microprocessor': '💻',
+    'Operating System': '🖥️',
+    'Foundation of Embedded System': '🔌',
+    'Engineering Career Navigation': '🧭',
+    'Indian Philosophical Systems': '🕉️',
+    'Sanskrit and Computational Linguistics': '📜',
   };
   return emojis[subject] || '📖';
 };
 
-// Check if item is a lab
 export const isLab = (subject) => subject?.includes('Lab');
 
-// Get today's day name
+// ----- DATE HELPERS -----
+
 export const getToday = () => {
   const today = new Date().getDay();
-  const dayMap = { 1: 'Monday', 2: 'Tuesday', 3: 'Wednesday', 4: 'Thursday', 5: 'Friday' };
+  const dayMap = { 
+    1: 'Monday', 
+    2: 'Tuesday', 
+    3: 'Wednesday', 
+    4: 'Thursday', 
+    5: 'Friday',
+    6: 'Saturday' 
+  };
   return dayMap[today] || 'Monday';
 };
 
-// Check if a time slot is currently happening
-export const isCurrentTimeSlot = (time) => {
-  const now = new Date();
-  const currentTimeStr = now.toTimeString().slice(0, 5);
-  return time.split('-')[0] <= currentTimeStr && time.split('-')[1] >= currentTimeStr;
-};
+// ----- BATCH HELPERS -----
 
-// Get item at specific day and time
-export const getItem = (day, time) => {
-  const dayData = timetableData[day];
-  if (!dayData) return null;
-  const allItems = [...dayData.classes, ...dayData.labs];
-  return allItems.find(item => item.time === time) || null;
+export const getBatchLabel = (batch) => batch || 'A';
+
+// ----- FORMATTING HELPERS (optional) -----
+
+export const formatCellContent = (items) => {
+  if (!items || items.length === 0) return '—';
+  
+  const grouped = items.reduce((acc, item) => {
+    const key = item.subject;
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(item);
+    return acc;
+  }, {});
+
+  const parts = [];
+
+  Object.keys(grouped).forEach((subject) => {
+    const subjectItems = grouped[subject];
+    const shortName = getSubjectShort(subject);
+
+    const batchA = subjectItems.find(i => i.batch === 'A');
+    const batchB = subjectItems.find(i => i.batch === 'B');
+
+    if (batchA) {
+      parts.push(`A ${shortName} /${batchA.teacher} ${batchA.room}`);
+    }
+    if (batchB) {
+      parts.push(`B ${shortName} /${batchB.teacher} ${batchB.room}`);
+    }
+    if (!batchA && !batchB) {
+      const item = subjectItems[0];
+      parts.push(`${shortName} /${item.teacher} ${item.room}`);
+    }
+  });
+
+  return parts.join(' ');
 };
