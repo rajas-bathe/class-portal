@@ -6,3 +6,4 @@ export { default as ScheduledCard } from './ScheduledCard';
 export { default as UpcomingSchedule } from './UpcomingSchedule';
 export { default as TimetableGrid } from './TimetableGrid';
 export { default as TimetableLegend } from './TimetableLegend';
+export { default as MobileSchedule } from './MobileSchedule';

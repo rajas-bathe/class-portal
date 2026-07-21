@@ -14,7 +14,7 @@ export function useTimetable() {
     return dayData.classes.filter(item => item.time === time);
   };
 
-  // Get filtered items based on view mode
+  // Get filtered items based on view mode (for the grid)
   const getFilteredItemsForPeriod = (day, time) => {
     const items = getItemsForPeriod(day, time);
     
@@ -27,7 +27,7 @@ export function useTimetable() {
     return items;
   };
 
-  // Get next lecture
+  // Get next lecture — ALWAYS without filtering (uniform)
   const getNextLecture = () => {
     const now = new Date();
     const currentTimeStr = now.toTimeString().slice(0, 5);
@@ -35,13 +35,8 @@ export function useTimetable() {
     const dayData = timetableData[today];
     if (!dayData) return null;
     
-    let allItems = dayData.classes;
-    
-    if (viewMode === 'lectures') {
-      allItems = allItems.filter(item => !item.subject.includes('Lab'));
-    } else if (viewMode === 'labs') {
-      allItems = allItems.filter(item => item.subject.includes('Lab'));
-    }
+    // ✅ No viewMode filter here – always show the next class
+    const allItems = dayData.classes;
     
     const upcoming = allItems
       .filter(item => item.time.split('-')[0] > currentTimeStr)
