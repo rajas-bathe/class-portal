@@ -7,3 +7,5 @@ export { default as UpcomingSchedule } from './UpcomingSchedule';
 export { default as TimetableGrid } from './TimetableGrid';
 export { default as TimetableLegend } from './TimetableLegend';
 export { default as MobileSchedule } from './MobileSchedule';
+export { default as ExamTimetable } from './ExamTimetable';
+export { default as InfoCards } from './InfoCards';

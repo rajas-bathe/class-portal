@@ -10,27 +10,30 @@ function TimetableGrid({
   return (
     <div className="w-full bg-white rounded-xl shadow-lg overflow-hidden border-2 border-gray-800">
 
-      {/* Header - College Info */}
-      <div className="p-3 md:p-4 border-b-2 border-gray-800 bg-gray-100">
-        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-1 md:gap-2">
-          <div>
-            <h2 className="text-base md:text-xl font-bold text-gray-900">CLASS TIME TABLE</h2>
-            <p className="text-xs md:text-sm text-gray-800 mt-0.5 md:mt-1">
-              <span className="font-semibold">Department:</span> Computer Engineering &nbsp;|&nbsp;
-              <span className="font-semibold">Class:</span> SY B.Tech (UG) &nbsp;|&nbsp;
-              <span className="font-semibold">Division:</span> SYCM3
-            </p>
-            <p className="text-xs md:text-sm text-gray-800">
-              <span className="font-semibold">w.e.f.</span> 25/08/2026 &nbsp;|&nbsp;
-              <span className="font-semibold">Class Teacher:</span> Ms. Preethi Paul
-            </p>
-          </div>
-          <div className="text-right text-xs md:text-sm text-gray-800">
-            <p><span className="font-semibold">Semester:</span> III &nbsp;|&nbsp; <span className="font-semibold">Academic Year:</span> 2026-27 (SH 2026)</p>
-            <p><span className="font-semibold">Version:</span> V1</p>
-          </div>
-        </div>
-      </div>
+{/* Header - College Info */}
+<div className="p-3 md:p-4 border-b-2 border-gray-800 bg-gray-100">
+  <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-1 md:gap-2">
+    <div>
+      {/* "CLASS TIME TABLE" — Smaller, cleaner */}
+      <h2 className="text-base md:text-lg font-bold text-gray-900 tracking-tight">
+        CLASS TIME TABLE
+      </h2>
+      <p className="text-xs md:text-sm text-gray-700 mt-0.5">
+        <span className="font-semibold">Department:</span> Computer Engineering &nbsp;|&nbsp;
+        <span className="font-semibold">Class:</span> SY B.Tech (UG) &nbsp;|&nbsp;
+        <span className="font-semibold">Division:</span> SYCM3
+      </p>
+      <p className="text-xs md:text-sm text-gray-700">
+        <span className="font-semibold">w.e.f.</span> 25/08/2026 &nbsp;|&nbsp;
+        <span className="font-semibold">Class Teacher:</span> Ms. Preethi Paul
+      </p>
+    </div>
+    <div className="text-right text-xs md:text-sm text-gray-700">
+      <p><span className="font-semibold">Semester:</span> III &nbsp;|&nbsp; <span className="font-semibold">Academic Year:</span> 2026-27 (SH 2026)</p>
+      <p><span className="font-semibold">Version:</span> V1</p>
+    </div>
+  </div>
+</div>
 
       {/* Timetable Table - Fully responsive */}
       <div className="w-full overflow-x-auto">
