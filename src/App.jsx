@@ -4,13 +4,15 @@ import Academics from "./pages/Academics";
 import Resources from "./pages/Resources";
 import Announcements from "./pages/Announcements";
 import Class from "./pages/Class";
-import SubjectDetail from "./pages/SubjectDetail"; // 
+import SubjectDetail from "./pages/SubjectDetail";
+import DriveView from "./pages/DriveView";
+import AcademicCalendarView from "./pages/AcademicCalendarView";
 
 // Importing Components
 import SideBar from "./components/layout/SideBar";
 import MobileNavbar from "./components/layout/MobileNavbar";
 
-// Importing Context
+// ✅ IMPORT THIS — NOT COMMENTED OUT
 import { SidebarProvider } from "./context/SidebarContext";
 
 // Importing BrowserRouter
@@ -22,16 +24,16 @@ function App() {
       <div className="flex flex-col h-screen">
         <MobileNavbar />
         <div className="flex flex-1 overflow-hidden">
-          {/* Sidebar */}
           <SideBar />
-          {/* Main content */}
           <main className="flex-1 overflow-y-auto bg-neutral-300">
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/academics" element={<Academics />} />
               <Route path="/academics/subjects" element={<SubjectDetail />} />
+              <Route path="/academics/calendar" element={<AcademicCalendarView />} />
               <Route path="/resources" element={<Resources />} />
+              <Route path="/resources/drive" element={<DriveView />} />
               <Route path="/announcements" element={<Announcements />} />
               <Route path="/class" element={<Class />} />
             </Routes>
