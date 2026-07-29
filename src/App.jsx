@@ -8,6 +8,7 @@ import SubjectDetail from "./pages/SubjectDetail";
 import DriveView from "./pages/DriveView";
 import AcademicCalendarView from "./pages/AcademicCalendarView";
 import DriveFileView from "./pages/DriveFileView";
+import AnnouncementsAdmin from "./pages/AnnouncementsAdmin";
 
 // Importing Components
 import SideBar from "./components/layout/SideBar";
@@ -39,6 +40,7 @@ function App() {
               <Route path="/resources/drive" element={<DriveView />} />
               <Route path="/resources/drive/file/:fileId" element={<DriveFileView />} />
               <Route path="/resources/drive/:folderId" element={<DriveView />} />
+              <Route path="/admin/announcements" element={<AnnouncementsAdmin />} />
               
               <Route path="/announcements" element={<Announcements />} />
               <Route path="/class" element={<Class />} />

@@ -2,9 +2,30 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDrive } from '../../hooks/useDrive';
 
-function DriveBrowser({ folderId, excludeFolderId, onNavigate }) {
+function DriveBrowser({ folderId, excludeFolderId, onNavigate, onFileClick }) {
   const navigate = useNavigate();
   const { items, loading, error } = useDrive(folderId, excludeFolderId);
+
+  const handleFolderClick = (folder) => {
+    if (onNavigate) {
+      onNavigate(folder.id, folder.name);
+    } else {
+      navigate(`/resources/drive/${folder.id}`, {
+        state: { folderPath: [{ id: folderId, name: 'Root' }, { id: folder.id, name: folder.name }] }
+      });
+    }
+  };
+
+  const handleFileClick = (file) => {
+    if (onFileClick) {
+      onFileClick(file.id);
+    } else {
+      const currentPath = window.history.state?.usr?.folderPath || [{ id: folderId, name: 'Root' }];
+      navigate(`/resources/drive/file/${file.id}`, {
+        state: { fromFolderId: folderId, folderPath: currentPath }
+      });
+    }
+  };
 
   if (loading) {
     return (
@@ -48,14 +69,8 @@ function DriveBrowser({ folderId, excludeFolderId, onNavigate }) {
     return null;
   };
 
-  const handleFileClick = (file) => {
-    // Navigate to the dedicated file view, passing the current folder ID for back navigation
-    navigate(`/resources/drive/file/${file.id}`, { state: { fromFolderId: folderId } });
-  };
-
   return (
     <>
-      {/* Folders */}
       {folders.length > 0 && (
         <div className="space-y-4">
           <h3 className="text-sm font-semibold text-gray-700 border-b border-gray-200 pb-1">📁 Folders</h3>
@@ -63,7 +78,7 @@ function DriveBrowser({ folderId, excludeFolderId, onNavigate }) {
             {folders.map((folder) => (
               <button
                 key={folder.id}
-                onClick={() => onNavigate && onNavigate(folder.id)}
+                onClick={() => handleFolderClick(folder)}
                 className="bg-white border-2 border-gray-800 rounded-xl p-4 text-center hover:shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex flex-col items-center"
               >
                 <span className="text-4xl mb-2">📁</span>
@@ -75,7 +90,6 @@ function DriveBrowser({ folderId, excludeFolderId, onNavigate }) {
         </div>
       )}
 
-      {/* Files */}
       {files.length > 0 && (
         <div className="space-y-4 mt-6">
           <h3 className="text-sm font-semibold text-gray-700 border-b border-gray-200 pb-1">📄 Files</h3>

@@ -16,8 +16,8 @@ export function useAnnouncementsAirtable() {
           throw new Error('Airtable credentials missing in .env');
         }
 
-        // ✅ Sort by createdTime (newest first)
-        const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?sort%5B0%5D%5Bfield%5D=createdTime&sort%5B0%5D%5Bdirection%5D=desc`;
+        // ✅ Fetch all records (without sorting in the query)
+        const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}`;
 
         const response = await fetch(url, {
           headers: {
@@ -41,13 +41,17 @@ export function useAnnouncementsAirtable() {
             sender: fields.Sender || fields.sender || 'Admin',
             category: fields.Category || fields.category || 'General',
             priority: fields.Priority || fields.priority || 'Medium',
-            // ✅ Store the actual createdTime from Airtable
             time: record.createdTime || new Date().toISOString(),
             imageUrl: fields.Upload && fields.Upload.length > 0 ? fields.Upload[0].url : '',
           };
         });
 
-        setItems(records);
+        // ✅ Sort on frontend: newest first
+        const sorted = records.sort((a, b) => {
+          return new Date(b.time) - new Date(a.time);
+        });
+
+        setItems(sorted);
       } catch (err) {
         console.error('Error fetching announcements:', err);
         setError(err.message);

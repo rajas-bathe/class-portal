@@ -7,12 +7,10 @@ function DriveFileView() {
   const { fileId } = useParams();
   const location = useLocation();
 
-  // Get folder ID from navigation state or fallback to .env
   const folderId = location.state?.fromFolderId || import.meta.env.VITE_DRIVE_FOLDER_ID;
-  const galleryFolderId = import.meta.env.VITE_GALLERY_FOLDER_ID;
+  const folderPath = location.state?.folderPath || [{ id: folderId, name: 'Root' }];
 
-  // Fetch all files in the folder (for navigation)
-  const { items, loading: folderLoading, error: folderError } = useDrive(folderId, galleryFolderId);
+  const { items, loading: folderLoading, error: folderError } = useDrive(folderId);
   const [file, setFile] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(-1);
 
@@ -25,7 +23,6 @@ function DriveFileView() {
         setCurrentIndex(idx);
         setFile(files[idx]);
       } else {
-        // File not in this folder – fallback to fetching its metadata directly
         const fetchFile = async () => {
           try {
             const API_KEY = import.meta.env.VITE_GOOGLE_DRIVE_API_KEY;
@@ -56,18 +53,25 @@ function DriveFileView() {
   const goToPrev = () => {
     if (currentIndex > 0) {
       const prevFile = items.files[currentIndex - 1];
-      navigate(`/resources/drive/file/${prevFile.id}`, { state: { fromFolderId: folderId } });
+      navigate(`/resources/drive/file/${prevFile.id}`, {
+        state: { fromFolderId: folderId, folderPath: folderPath }
+      });
     }
   };
 
   const goToNext = () => {
     if (currentIndex < items.files.length - 1) {
       const nextFile = items.files[currentIndex + 1];
-      navigate(`/resources/drive/file/${nextFile.id}`, { state: { fromFolderId: folderId } });
+      navigate(`/resources/drive/file/${nextFile.id}`, {
+        state: { fromFolderId: folderId, folderPath: folderPath }
+      });
     }
   };
 
-  // Loading state
+  const goBack = () => {
+    navigate(`/resources/drive/${folderId}`, { state: { folderPath: folderPath } });
+  };
+
   if (folderLoading || !file) {
     return (
       <div className="flex items-center justify-center h-full bg-gray-50">
@@ -86,7 +90,7 @@ function DriveFileView() {
           <p className="text-lg font-semibold">⚠️ Failed to load folder</p>
           <p className="text-sm">{folderError}</p>
           <button
-            onClick={() => navigate(`/resources/drive/${folderId}`)}
+            onClick={() => goBack()}
             className="mt-4 bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-gray-700"
           >
             ← Back to Drive
@@ -104,7 +108,7 @@ function DriveFileView() {
       {/* Header with Back, File name, Navigation */}
       <div className="flex items-center gap-3 p-3 bg-white border-b border-gray-200 shadow-sm flex-shrink-0 flex-wrap">
         <button
-          onClick={() => navigate(`/resources/drive/${folderId}`)}
+          onClick={goBack}
           className="flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors whitespace-nowrap"
         >
           ← Back

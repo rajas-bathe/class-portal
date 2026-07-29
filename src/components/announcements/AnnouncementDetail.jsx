@@ -32,23 +32,35 @@ function AnnouncementDetail({ item, onClose }) {
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-xl font-bold text-gray-900">{item.title}</h2>
-          <p className="text-gray-700 whitespace-pre-wrap">{item.message}</p>
+          {/* Title */}
+          <h2 className="text-2xl font-bold text-gray-900">{item.title}</h2>
+
+          {/* Message + Category + Sender */}
+          <p className="text-gray-700 whitespace-pre-wrap">
+            {item.message}
+          </p>
+          <p className="text-sm text-gray-500">
+            Category: {item.category} · Sender: {item.sender}
+          </p>
+
+          {/* Image */}
           {item.imageUrl && (
             <div className="rounded-lg overflow-hidden border border-gray-200">
-              <img src={item.imageUrl} alt="Announcement" className="w-full object-cover" />
+              <img
+                src={item.imageUrl}
+                alt={item.title}
+                className="w-full object-cover max-h-96"
+                loading="lazy"
+              />
             </div>
           )}
-          <div className="flex gap-3 pt-4">
-            <span className="text-xs font-medium bg-gray-100 text-gray-600 px-3 py-1 rounded-full">
-              {item.category}
+
+          {/* Priority Badge */}
+          {item.priority === 'High' && (
+            <span className="inline-block text-xs font-medium bg-red-100 text-red-700 px-3 py-1 rounded-full">
+              ⚡ High Priority
             </span>
-            {item.priority === 'high' && (
-              <span className="text-xs font-medium bg-red-100 text-red-600 px-3 py-1 rounded-full">
-                ⚡ High priority
-              </span>
-            )}
-          </div>
+          )}
         </div>
       </div>
     </div>

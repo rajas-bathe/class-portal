@@ -1,16 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { templates } from '../data/templatesData';
 import { forms } from '../data/formsData';
 import DocCard from '../components/resources/DocCard';
 import SectionHeader from '../components/resources/SectionHeader';
-import DriveBrowser from '../components/resources/DriveBrowser';
+import DriveFolderCard from '../components/resources/DriveFolderCard';
+import { useDrive } from '../hooks/useDrive';
 
 function Resources() {
   const navigate = useNavigate();
 
   const driveFolderId = import.meta.env.VITE_DRIVE_FOLDER_ID;
   const galleryFolderId = import.meta.env.VITE_GALLERY_FOLDER_ID;
+
+  // ✅ Fetch only the first 4 folders from Drive
+  const { items, loading, error } = useDrive(driveFolderId, galleryFolderId);
+  const previewFolders = items.folders?.slice(0, 4) || [];
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-8">
@@ -26,16 +31,54 @@ function Resources() {
           <SectionHeader icon="📂" title="Google Drive" />
           <button
             onClick={() => navigate('/resources/drive')}
-            className="text-sm text-blue-600 hover:underline"
+            className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 text-sm border border-gray-700"
           >
-            View All →
+            <span className="text-lg">→</span>
+            View All
           </button>
         </div>
-        <DriveBrowser
-          folderId={driveFolderId}
-          excludeFolderId={galleryFolderId}
-          onNavigate={(subFolderId) => navigate(`/resources/drive/${subFolderId}`)}
-        />
+
+        {/* ✅ Show only 4 folders as preview */}
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[1, 2, 3, 4].map(i => (
+              <div key={i} className="bg-gray-200 rounded-xl h-32 animate-pulse"></div>
+            ))}
+          </div>
+        ) : error ? (
+          <div className="bg-red-50 border-2 border-red-300 rounded-xl p-4 text-center">
+            <p className="text-red-600 font-medium">⚠️ Failed to load Drive</p>
+            <p className="text-sm text-red-500">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-3 bg-gray-800 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-gray-900"
+            >
+              Retry
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {previewFolders.map((folder) => (
+              <DriveFolderCard
+                key={folder.id}
+                title={folder.name}
+                count={`${folder.files?.length || 0} files`}
+                onClick={() => navigate(`/resources/drive/${folder.id}`)}
+              />
+            ))}
+            {/* ✅ "View All" card as the 4th slot if there are fewer than 4 folders */}
+            {previewFolders.length < 4 && (
+              <button
+                onClick={() => navigate('/resources/drive')}
+                className="bg-gray-800 text-white border-2 border-gray-800 rounded-xl p-6 text-center hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex flex-col items-center justify-center col-span-1"
+              >
+                <span className="text-4xl">→</span>
+                <p className="mt-2 text-sm font-bold">View All</p>
+                <p className="text-xs text-gray-400">Browse all folders</p>
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Document Templates */}
@@ -82,6 +125,7 @@ function Resources() {
           </Link>
         </div>
       </div>
+
     </div>
   );
 }
