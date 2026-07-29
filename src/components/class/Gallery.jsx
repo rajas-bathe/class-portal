@@ -277,7 +277,7 @@ function Gallery() {
                 onClick={() => openLightbox(index)}
                 className="group bg-white border-2 border-gray-800 rounded-xl overflow-hidden hover:shadow-lg transition-all duration-200 hover:scale-[1.02] cursor-pointer"
               >
-                <div className="aspect-square overflow-hidden bg-gray-100">
+                <div className="aspect-[3/4] overflow-hidden bg-gray-100">
                   <img
                     src={thumbnailUrl}
                     alt={img.name}
@@ -295,9 +295,9 @@ function Gallery() {
                     }}
                   />
                 </div>
-                <div className="p-2">
-                  <p className="text-xs text-gray-600 truncate">{img.name}</p>
-                </div>
+                {/*<div className="p-2">
+                  <p className="text-xs text-gray-600 truncate"></p>
+                </div>*/}
               </div>
             );
           })}
