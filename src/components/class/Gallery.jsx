@@ -29,11 +29,11 @@ function Gallery() {
         throw new Error(data.error.message);
       }
 
-      const imageFiles = data.files.filter(file =>
-        file.mimeType.startsWith('image/')
+      const mediaFiles = data.files.filter(file =>
+        file.mimeType.startsWith('image/') || file.mimeType.startsWith('video/')
       );
 
-      setImages(imageFiles);
+      setImages(mediaFiles);
     } catch (err) {
       console.error('Error fetching gallery:', err);
       setError(err.message);
@@ -74,7 +74,7 @@ function Gallery() {
 
   const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.5, 4));
   const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.5, 1));
-  
+
   const handleWheel = (e) => {
     if (e.deltaY < 0) {
       handleZoomIn();
@@ -97,34 +97,39 @@ function Gallery() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedImage, currentIndex]);
 
-// ✅ Thumbnail: proxy via images.weserv.nl (resized to 400px to save bandwidth)
-const getThumbnailUrl = (img) => {
-  let url;
-  if (img.webContentLink) {
-    url = img.webContentLink;
-  } else if (img.thumbnailLink) {
-    url = img.thumbnailLink.replace(/^http:/, 'https:');
-  } else {
-    url = `https://drive.google.com/uc?export=view&id=${img.id}`;
-  }
-  return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=400&h=400&fit=cover`;
-};
+  const getThumbnailUrl = (img) => {
+    if (img.mimeType.startsWith('video/')) {
+      if (img.thumbnailLink) {
+        const thumbUrl = img.thumbnailLink.replace(/^http:/, 'https:');
+        return `https://images.weserv.nl/?url=${encodeURIComponent(thumbUrl)}&w=400&h=400&fit=cover`;
+      }
+      return 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="2"%3E%3Crect x="2" y="2" width="20" height="20" rx="2"/%3E%3Cpolygon points="10,6 18,12 10,18"/%3E%3C/svg%3E';
+    }
 
-// ✅ Lightbox: proxy via images.weserv.nl (full size)
-const getHighResImageUrl = (img) => {
-  if (!img) return '';
-  let url;
-  if (img.webContentLink) {
-    url = img.webContentLink;
-  } else if (img.thumbnailLink) {
-    url = img.thumbnailLink.replace(/^http:/, 'https:');
-  } else {
-    url = `https://drive.google.com/uc?export=view&id=${img.id}`;
-  }
-  return `https://images.weserv.nl/?url=${encodeURIComponent(url)}`;
-};
+    let url;
+    if (img.webContentLink) {
+      url = img.webContentLink;
+    } else if (img.thumbnailLink) {
+      url = img.thumbnailLink.replace(/^http:/, 'https:');
+    } else {
+      url = `https://drive.google.com/uc?export=view&id=${img.id}`;
+    }
+    return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&w=400&h=400&fit=cover`;
+  };
 
-  // Fallback: if lightbox image fails (proxy down), try direct URL
+  const getHighResImageUrl = (img) => {
+    if (!img) return '';
+    let url;
+    if (img.webContentLink) {
+      url = img.webContentLink;
+    } else if (img.thumbnailLink) {
+      url = img.thumbnailLink.replace(/^http:/, 'https:');
+    } else {
+      url = `https://drive.google.com/uc?export=view&id=${img.id}`;
+    }
+    return `https://images.weserv.nl/?url=${encodeURIComponent(url)}`;
+  };
+
   const handleLightboxError = (e) => {
     const img = e.target;
     const fileId = img.dataset.fileid;
@@ -200,10 +205,14 @@ const getHighResImageUrl = (img) => {
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                     loading="lazy"
                     onError={(e) => {
-                      // Fallback for thumbnail: try direct download if needed
-                      e.target.onerror = null;
-                      const directUrl = `https://drive.google.com/uc?export=view&id=${img.id}`;
-                      e.target.src = directUrl;
+                      if (!img.mimeType.startsWith('video/')) {
+                        e.target.onerror = null;
+                        const directUrl = `https://drive.google.com/uc?export=view&id=${img.id}`;
+                        e.target.src = directUrl;
+                      } else {
+                        e.target.onerror = null;
+                        e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="gray" stroke-width="2"%3E%3Crect x="2" y="2" width="20" height="20" rx="2"/%3E%3Cpolygon points="10,6 18,12 10,18"/%3E%3C/svg%3E';
+                      }
                     }}
                   />
                 </div>
@@ -257,46 +266,62 @@ const getHighResImageUrl = (img) => {
               </button>
             )}
 
-            {/* Image with zoom */}
-            <div 
-              className="flex-1 w-full h-full relative overflow-hidden flex items-center justify-center cursor-zoom-in"
+            {/* Media Content */}
+            <div
+              className="flex-1 w-full h-full relative overflow-hidden flex items-center justify-center"
               onWheel={handleWheel}
-              onDoubleClick={() => zoom > 1 ? setZoom(1) : setZoom(2)}
+              onDoubleClick={() => {
+                if (!images[currentIndex]?.mimeType?.startsWith('video/')) {
+                  zoom > 1 ? setZoom(1) : setZoom(2);
+                }
+              }}
             >
-              <img
-                data-fileid={images[currentIndex].id}
-                src={getHighResImageUrl(images[currentIndex])}
-                style={{ transform: `scale(${zoom})` }}
-                className="w-full h-full object-contain transition-transform duration-300 ease-out"
-                alt="Full resolution preview"
-                draggable="false"
-                onError={handleLightboxError}
-              />
+              {images[currentIndex]?.mimeType?.startsWith('video/') ? (
+                // ✅ VIDEO — Embedded Google Drive Player (works if folder is public)
+                <iframe
+                  src={`https://drive.google.com/file/d/${images[currentIndex].id}/preview?embedded=true`}
+                  className="w-full h-full object-contain"
+                  allow="autoplay; fullscreen"
+                  allowFullScreen
+                  title="Video player"
+                  frameBorder="0"
+                />
+              ) : (
+                // ✅ IMAGE — Display with zoom
+                <img
+                  data-fileid={images[currentIndex].id}
+                  src={getHighResImageUrl(images[currentIndex])}
+                  style={{ transform: `scale(${zoom})` }}
+                  className="w-full h-full object-contain transition-transform duration-300 ease-out cursor-zoom-in"
+                  alt="Full resolution preview"
+                  draggable="false"
+                  onError={handleLightboxError}
+                />
+              )}
             </div>
 
-            {/* Zoom Controls */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/70 backdrop-blur-md px-2 py-1.5 rounded-full z-30 border border-gray-700 shadow-lg">
-              <button 
-                onClick={handleZoomOut} 
-                disabled={zoom <= 1}
-                className="text-gray-300 hover:text-white disabled:opacity-30 disabled:hover:text-gray-300 w-8 h-8 flex items-center justify-center text-2xl font-light transition-colors"
-              >
-                −
-              </button>
-              
-              <div className="text-gray-300 text-xs font-medium w-12 text-center cursor-pointer hover:text-white" onClick={() => setZoom(1)} title="Reset zoom">
-                {Math.round(zoom * 100)}%
+            {/* Zoom Controls (only visible for images) */}
+            {!images[currentIndex]?.mimeType?.startsWith('video/') && (
+              <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/70 backdrop-blur-md px-2 py-1.5 rounded-full z-30 border border-gray-700 shadow-lg">
+                <button
+                  onClick={handleZoomOut}
+                  disabled={zoom <= 1}
+                  className="text-gray-300 hover:text-white disabled:opacity-30 disabled:hover:text-gray-300 w-8 h-8 flex items-center justify-center text-2xl font-light transition-colors"
+                >
+                  −
+                </button>
+                <div className="text-gray-300 text-xs font-medium w-12 text-center cursor-pointer hover:text-white" onClick={() => setZoom(1)} title="Reset zoom">
+                  {Math.round(zoom * 100)}%
+                </div>
+                <button
+                  onClick={handleZoomIn}
+                  disabled={zoom >= 4}
+                  className="text-gray-300 hover:text-white disabled:opacity-30 disabled:hover:text-gray-300 w-8 h-8 flex items-center justify-center text-2xl font-light transition-colors"
+                >
+                  +
+                </button>
               </div>
-              
-              <button 
-                onClick={handleZoomIn}
-                disabled={zoom >= 4}
-                className="text-gray-300 hover:text-white disabled:opacity-30 disabled:hover:text-gray-300 w-8 h-8 flex items-center justify-center text-2xl font-light transition-colors"
-              >
-                +
-              </button>
-            </div>
-
+            )}
           </div>
         </div>
       )}

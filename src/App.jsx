@@ -33,7 +33,9 @@ function App() {
               <Route path="/academics/subjects" element={<SubjectDetail />} />
               <Route path="/academics/calendar" element={<AcademicCalendarView />} />
               <Route path="/resources" element={<Resources />} />
+              {/* ✅ Nested route for Drive folders */}
               <Route path="/resources/drive" element={<DriveView />} />
+              <Route path="/resources/drive/:folderId" element={<DriveView />} />
               <Route path="/announcements" element={<Announcements />} />
               <Route path="/class" element={<Class />} />
             </Routes>
