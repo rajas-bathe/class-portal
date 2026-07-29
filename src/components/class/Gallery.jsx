@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import VideoEmbed from './VideoEmbed'; // ✅ same folder
 
 function Gallery() {
   const [images, setImages] = useState([]);
@@ -7,6 +8,16 @@ function Gallery() {
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [zoom, setZoom] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
+  
+  // ✅ loading state for image transitions
+  const [isImageLoading, setIsImageLoading] = useState(false);
+  
+  // ✅ Preload tracking
+  const preloadedUrls = useRef(new Set());
 
   const fetchGalleryImages = async () => {
     try {
@@ -50,12 +61,16 @@ function Gallery() {
     setCurrentIndex(index);
     setSelectedImage(images[index].id);
     setZoom(1);
+    setPosition({ x: 0, y: 0 });
+    setIsImageLoading(true);
   };
 
   const closeLightbox = () => {
     setSelectedImage(null);
     setCurrentIndex(0);
     setZoom(1);
+    setPosition({ x: 0, y: 0 });
+    setIsImageLoading(false);
   };
 
   const goToPrevious = () => {
@@ -63,6 +78,8 @@ function Gallery() {
     setCurrentIndex(newIndex);
     setSelectedImage(images[newIndex].id);
     setZoom(1);
+    setPosition({ x: 0, y: 0 });
+    setIsImageLoading(true);
   };
 
   const goToNext = () => {
@@ -70,17 +87,53 @@ function Gallery() {
     setCurrentIndex(newIndex);
     setSelectedImage(images[newIndex].id);
     setZoom(1);
+    setPosition({ x: 0, y: 0 });
+    setIsImageLoading(true);
   };
 
-  const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.5, 4));
-  const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.5, 1));
+  const handleZoomIn = () => {
+    setZoom(prev => Math.min(prev + 0.3, 4));
+  };
+
+  const handleZoomOut = () => {
+    setZoom(prev => Math.max(prev - 0.3, 1));
+  };
+
+  const resetZoom = () => {
+    setZoom(1);
+    setPosition({ x: 0, y: 0 });
+  };
 
   const handleWheel = (e) => {
+    e.preventDefault();
     if (e.deltaY < 0) {
-      handleZoomIn();
+      setZoom(prev => Math.min(prev + 0.3, 4));
     } else {
-      handleZoomOut();
+      setZoom(prev => Math.max(prev - 0.3, 1));
     }
+  };
+
+  const handleMouseDown = (e) => {
+    if (images[currentIndex]?.mimeType?.startsWith('video/')) return;
+    if (zoom <= 1) return;
+
+    setIsDragging(true);
+    setDragStart({ x: e.clientX, y: e.clientY });
+    setStartPos({ x: position.x, y: position.y });
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    const dx = e.clientX - dragStart.x;
+    const dy = e.clientY - dragStart.y;
+    setPosition({
+      x: startPos.x + dx,
+      y: startPos.y + dy,
+    });
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
   };
 
   useEffect(() => {
@@ -91,11 +144,35 @@ function Gallery() {
       if (e.key === 'Escape') closeLightbox();
       if (e.key === '=' || e.key === '+') handleZoomIn();
       if (e.key === '-') handleZoomOut();
+      if (e.key === 'r' || e.key === 'R') resetZoom();
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedImage, currentIndex]);
+
+  // ✅ Preload adjacent images (2 before, 2 after)
+  const preloadImages = (imageList) => {
+    imageList.forEach((img) => {
+      if (!img || img.mimeType?.startsWith('video/')) return;
+      const url = getHighResImageUrl(img);
+      if (!url || preloadedUrls.current.has(url)) return;
+      preloadedUrls.current.add(url);
+      const preloadImg = new Image();
+      preloadImg.src = url;
+    });
+  };
+
+  useEffect(() => {
+    if (images.length === 0 || selectedImage === null) return;
+    const toPreload = [];
+    for (let i = Math.max(0, currentIndex - 2); i <= Math.min(images.length - 1, currentIndex + 2); i++) {
+      if (i !== currentIndex) {
+        toPreload.push(images[i]);
+      }
+    }
+    preloadImages(toPreload);
+  }, [currentIndex, images, selectedImage]);
 
   const getThumbnailUrl = (img) => {
     if (img.mimeType.startsWith('video/')) {
@@ -127,7 +204,8 @@ function Gallery() {
     } else {
       url = `https://drive.google.com/uc?export=view&id=${img.id}`;
     }
-    return `https://images.weserv.nl/?url=${encodeURIComponent(url)}`;
+    // ✅ High quality, no resizing, WebP format (smaller & crisp)
+    return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&q=100&output=webp`;
   };
 
   const handleLightboxError = (e) => {
@@ -138,6 +216,7 @@ function Gallery() {
       const directUrl = `https://drive.google.com/uc?export=view&id=${fileId}`;
       img.src = directUrl;
     }
+    setIsImageLoading(false);
   };
 
   if (loading) {
@@ -240,12 +319,21 @@ function Gallery() {
               <div className="text-gray-300 bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium pointer-events-auto">
                 {currentIndex + 1} / {images.length}
               </div>
-              <button
-                onClick={closeLightbox}
-                className="text-gray-400 hover:text-white bg-black/50 hover:bg-black/80 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center text-xl transition-all pointer-events-auto"
-              >
-                ✕
-              </button>
+              <div className="flex items-center gap-2 pointer-events-auto">
+                <button
+                  onClick={resetZoom}
+                  className="text-gray-400 hover:text-white bg-black/50 hover:bg-black/80 backdrop-blur-sm rounded-full w-8 h-8 flex items-center justify-center text-sm transition-all"
+                  title="Reset zoom"
+                >
+                  ⟲
+                </button>
+                <button
+                  onClick={closeLightbox}
+                  className="text-gray-400 hover:text-white bg-black/50 hover:bg-black/80 backdrop-blur-sm rounded-full w-10 h-10 flex items-center justify-center text-xl transition-all"
+                >
+                  ✕
+                </button>
+              </div>
             </div>
 
             {/* Previous / Next */}
@@ -266,41 +354,49 @@ function Gallery() {
               </button>
             )}
 
-            {/* Media Content */}
+            {/* Media */}
             <div
               className="flex-1 w-full h-full relative overflow-hidden flex items-center justify-center"
               onWheel={handleWheel}
-              onDoubleClick={() => {
-                if (!images[currentIndex]?.mimeType?.startsWith('video/')) {
-                  zoom > 1 ? setZoom(1) : setZoom(2);
-                }
-              }}
+              onDoubleClick={resetZoom}
             >
               {images[currentIndex]?.mimeType?.startsWith('video/') ? (
-                // ✅ VIDEO — Embedded Google Drive Player (works if folder is public)
-                <iframe
-                  src={`https://drive.google.com/file/d/${images[currentIndex].id}/preview?embedded=true`}
-                  className="w-full h-full object-contain"
-                  allow="autoplay; fullscreen"
-                  allowFullScreen
-                  title="Video player"
-                  frameBorder="0"
+                <VideoEmbed
+                  fileId={images[currentIndex].id}
+                  fileName={images[currentIndex].name}
                 />
               ) : (
-                // ✅ IMAGE — Display with zoom
-                <img
-                  data-fileid={images[currentIndex].id}
-                  src={getHighResImageUrl(images[currentIndex])}
-                  style={{ transform: `scale(${zoom})` }}
-                  className="w-full h-full object-contain transition-transform duration-300 ease-out cursor-zoom-in"
-                  alt="Full resolution preview"
-                  draggable="false"
-                  onError={handleLightboxError}
-                />
+                <>
+                  {/* ✅ Loading overlay */}
+                  {isImageLoading && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center z-20 bg-black/60 backdrop-blur-sm">
+                      <div className="w-10 h-10 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+                      <p className="text-gray-300 text-sm mt-3">Loading image...</p>
+                    </div>
+                  )}
+                  <img
+                    data-fileid={images[currentIndex].id}
+                    src={getHighResImageUrl(images[currentIndex])}
+                    style={{
+                      transform: `scale(${zoom}) translate(${position.x / zoom}px, ${position.y / zoom}px)`,
+                      cursor: zoom > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default',
+                      transition: isDragging ? 'none' : 'transform 0.15s ease-out',
+                    }}
+                    className="w-full h-full object-contain select-none"
+                    alt="Full resolution preview"
+                    draggable="false"
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                    onLoad={() => setIsImageLoading(false)}
+                    onError={handleLightboxError}
+                  />
+                </>
               )}
             </div>
 
-            {/* Zoom Controls (only visible for images) */}
+            {/* Zoom Controls */}
             {!images[currentIndex]?.mimeType?.startsWith('video/') && (
               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/70 backdrop-blur-md px-2 py-1.5 rounded-full z-30 border border-gray-700 shadow-lg">
                 <button
@@ -310,7 +406,11 @@ function Gallery() {
                 >
                   −
                 </button>
-                <div className="text-gray-300 text-xs font-medium w-12 text-center cursor-pointer hover:text-white" onClick={() => setZoom(1)} title="Reset zoom">
+                <div
+                  className="text-gray-300 text-xs font-medium w-12 text-center cursor-pointer hover:text-white transition-colors"
+                  onClick={resetZoom}
+                  title="Reset zoom"
+                >
                   {Math.round(zoom * 100)}%
                 </div>
                 <button

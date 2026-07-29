@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDrive } from '../../hooks/useDrive';
-import DriveFileViewer from './DriveFileViewer';
 
 function DriveBrowser({ folderId, excludeFolderId, onNavigate }) {
+  const navigate = useNavigate();
   const { items, loading, error } = useDrive(folderId, excludeFolderId);
-  const [viewerFile, setViewerFile] = useState(null);
 
   if (loading) {
     return (
@@ -33,13 +33,24 @@ function DriveBrowser({ folderId, excludeFolderId, onNavigate }) {
 
   const { folders, files } = items;
 
-  // Helper to get file icon
   const getFileIcon = (mimeType) => {
     if (mimeType.includes('pdf')) return '📄';
     if (mimeType.includes('presentation')) return '📊';
     if (mimeType.includes('document') || mimeType.includes('word')) return '📝';
     if (mimeType.includes('spreadsheet')) return '📈';
     return '📎';
+  };
+
+  const getThumbnail = (file) => {
+    if (file.thumbnailLink) {
+      return file.thumbnailLink.replace(/^http:/, 'https:');
+    }
+    return null;
+  };
+
+  const handleFileClick = (file) => {
+    // Navigate to the dedicated file view, passing the current folder ID for back navigation
+    navigate(`/resources/drive/file/${file.id}`, { state: { fromFolderId: folderId } });
   };
 
   return (
@@ -71,13 +82,23 @@ function DriveBrowser({ folderId, excludeFolderId, onNavigate }) {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {files.map((file) => {
               const icon = getFileIcon(file.mimeType);
+              const thumbnail = getThumbnail(file);
+
               return (
                 <button
                   key={file.id}
-                  onClick={() => setViewerFile(file)}
+                  onClick={() => handleFileClick(file)}
                   className="bg-white border-2 border-gray-800 rounded-xl p-4 text-center hover:shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex flex-col items-center"
                 >
-                  <span className="text-4xl mb-2">{icon}</span>
+                  {thumbnail ? (
+                    <img
+                      src={thumbnail}
+                      alt={file.name}
+                      className="w-16 h-16 object-cover rounded-lg mb-2 border border-gray-200"
+                    />
+                  ) : (
+                    <span className="text-4xl mb-2">{icon}</span>
+                  )}
                   <h4 className="text-sm font-bold text-gray-900 truncate w-full">{file.name}</h4>
                   <p className="text-xs text-gray-500 mt-1">Click to view</p>
                 </button>
@@ -91,14 +112,6 @@ function DriveBrowser({ folderId, excludeFolderId, onNavigate }) {
         <div className="bg-gray-50 border-2 border-gray-300 rounded-xl p-8 text-center">
           <p className="text-gray-500">This folder is empty</p>
         </div>
-      )}
-
-      {/* File Viewer Modal */}
-      {viewerFile && (
-        <DriveFileViewer
-          file={viewerFile}
-          onClose={() => setViewerFile(null)}
-        />
       )}
     </>
   );

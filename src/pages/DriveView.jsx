@@ -6,7 +6,6 @@ function DriveView() {
   const navigate = useNavigate();
   const { folderId } = useParams();
 
-  // Use root folder from .env if no folderId is provided
   const rootFolderId = folderId || import.meta.env.VITE_DRIVE_FOLDER_ID;
   const galleryFolderId = import.meta.env.VITE_GALLERY_FOLDER_ID;
 

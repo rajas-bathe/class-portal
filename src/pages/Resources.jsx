@@ -38,8 +38,50 @@ function Resources() {
         />
       </div>
 
-      {/* Templates and Forms */}
-      {/* ... unchanged */}
+      {/* Document Templates */}
+      <div className="space-y-4">
+        <SectionHeader icon="📄" title="Document Templates" />
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {templates.map((template) => (
+            <DocCard key={template.id} {...template} type="template" />
+          ))}
+        </div>
+      </div>
+
+      {/* Common Forms */}
+      <div className="space-y-4">
+        <SectionHeader icon="📋" title="Common Forms" />
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {forms.map((form) => (
+            <DocCard key={form.id} {...form} type="form" />
+          ))}
+        </div>
+      </div>
+
+      {/* Syllabus & Academic Calendar */}
+      <div className="space-y-4">
+        <SectionHeader icon="📚" title="Syllabus & Academic Calendar" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Link
+            to="/academics/subjects"
+            className="bg-white border-2 border-gray-800 rounded-xl p-6 text-center hover:shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] block"
+          >
+            <div className="text-4xl mb-2">📖</div>
+            <h3 className="text-sm font-bold text-gray-900">View Full Syllabus</h3>
+            <p className="text-xs text-gray-500">Complete semester syllabus with modules & resources</p>
+            <div className="mt-3 text-xs font-medium text-gray-400">Click to view →</div>
+          </Link>
+          <Link
+            to="/academics/calendar"
+            className="bg-white border-2 border-gray-800 rounded-xl p-6 text-center hover:shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] block"
+          >
+            <div className="text-4xl mb-2">📅</div>
+            <h3 className="text-sm font-bold text-gray-900">Academic Calendar</h3>
+            <p className="text-xs text-gray-500">Upcoming events, holidays & deadlines</p>
+            <div className="mt-3 text-xs font-medium text-gray-400">Click to view →</div>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
