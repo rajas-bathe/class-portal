@@ -24,6 +24,7 @@ A modern class portal built using **React**, **Vite**, and **Tailwind CSS** to p
 | **Vite** | Build tool & dev server |
 | **Tailwind CSS** | Styling & responsive design |
 | **JavaScript (ES6+)** | Logic & interactivity |
+| **Airtable** | API &  Data |
 
 ---
 
