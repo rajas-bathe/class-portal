@@ -11,6 +11,7 @@ function SideBar() {
     { path: '/resources', label: 'Resources', icon: '📁' },
     { path: '/announcements', label: 'Announcements', icon: '📢' },
     { path: '/class', label: 'Class', icon: '🎓' },
+    { path: '/about', label: 'About', icon: '⚙️' },
   ];
 
   return (

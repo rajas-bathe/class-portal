@@ -8,13 +8,13 @@ import SubjectDetail from "./pages/SubjectDetail";
 import DriveView from "./pages/DriveView";
 import AcademicCalendarView from "./pages/AcademicCalendarView";
 import DriveFileView from "./pages/DriveFileView";
-import AnnouncementsAdmin from "./pages/AnnouncementsAdmin";
+import About from "./pages/About";
 
 // Importing Components
 import SideBar from "./components/layout/SideBar";
 import MobileNavbar from "./components/layout/MobileNavbar";
 
-// ✅ IMPORT THIS — NOT COMMENTED OUT
+// Sidebar
 import { SidebarProvider } from "./context/SidebarContext";
 
 // Importing BrowserRouter
@@ -35,12 +35,13 @@ function App() {
               <Route path="/academics/subjects" element={<SubjectDetail />} />
               <Route path="/academics/calendar" element={<AcademicCalendarView />} />
               <Route path="/resources" element={<Resources />} />
+              <Route path="/about" element={<About />} />
               
-              {/* ✅ CORRECT ORDER: file route BEFORE folder route */}
+              {/*  */}
               <Route path="/resources/drive" element={<DriveView />} />
               <Route path="/resources/drive/file/:fileId" element={<DriveFileView />} />
               <Route path="/resources/drive/:folderId" element={<DriveView />} />
-              <Route path="/admin/announcements" element={<AnnouncementsAdmin />} />
+              
               
               <Route path="/announcements" element={<Announcements />} />
               <Route path="/class" element={<Class />} />
