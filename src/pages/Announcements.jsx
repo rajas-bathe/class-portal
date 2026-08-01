@@ -40,7 +40,7 @@ function Announcements() {
   }
 
   return (
-    <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-4">
+    <div className="p-4 md:p-6 max-w-4xl mx-auto space-y-4">
       {/* Header */}
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">📢 Announcements</h1>
