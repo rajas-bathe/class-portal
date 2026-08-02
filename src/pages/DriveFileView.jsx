@@ -139,17 +139,28 @@ function DriveFileView() {
         )}
       </div>
 
-      {/* Viewer – full height, no scroll on page */}
-      <div className="flex-1 overflow-hidden" style={{ overscrollBehavior: 'contain' }}>
+{/* Viewer – full height, no scroll on page */}
+      {/* Reverted to permanently use bg-[#323232] to match the unchangeable iframe */}
+      <div className="flex-1 overflow-hidden relative bg-[#323232] pt-6" style={{ overscrollBehavior: 'contain' }}>
+        
+        {/* 
+          VISUAL OVERLAY: Reverted to permanently use bg-[#1f1f1f] 
+        */}
+        <div 
+          className="absolute top-6 right-0 w-14 h-14 bg-[#1f1f1f] z-10 cursor-default"
+          aria-hidden="true"
+        />
+
         <iframe
           src={previewUrl}
-          className="w-full h-full"
+          className="w-full h-full rounded-t-md"
           allow="autoplay; fullscreen"
           allowFullScreen
           title={file.name}
           frameBorder="0"
           referrerPolicy="origin"
           style={{ display: 'block' }}
+          sandbox="allow-scripts allow-same-origin allow-forms"
         />
       </div>
     </div>

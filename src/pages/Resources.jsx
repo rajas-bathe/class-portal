@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { templates } from '../data/templatesData';
 import { forms } from '../data/formsData';
@@ -6,6 +6,7 @@ import DocCard from '../components/resources/DocCard';
 import SectionHeader from '../components/resources/SectionHeader';
 import DriveFolderCard from '../components/resources/DriveFolderCard';
 import { useDrive } from '../hooks/useDrive';
+import { InfoCards } from '../components/academics';
 
 function Resources() {
   const navigate = useNavigate();
@@ -13,9 +14,16 @@ function Resources() {
   const driveFolderId = import.meta.env.VITE_DRIVE_FOLDER_ID;
   const galleryFolderId = import.meta.env.VITE_GALLERY_FOLDER_ID;
 
-  // ✅ Fetch only the first 4 folders from Drive
+  // Fetch Drive folders for the preview strip. If there are more than 4,
+  // show only the first 3 real folders and use the 4th slot as a
+  // dedicated "View All" card — so the affordance to see more lives in
+  // the grid itself rather than as a separate line below it. If there
+  // are 4 or fewer, show all of them as real folder cards.
   const { items, loading, error } = useDrive(driveFolderId, galleryFolderId);
-  const previewFolders = items.folders?.slice(0, 4) || [];
+  const allFolders = items.folders || [];
+  const hasMoreFolders = allFolders.length > 4;
+  const previewFolders = hasMoreFolders ? allFolders.slice(0, 3) : allFolders.slice(0, 4);
+  const remainingCount = allFolders.length - previewFolders.length;
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-8">
@@ -29,19 +37,20 @@ function Resources() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <SectionHeader icon="📂" title="Google Drive" />
+          {/* Only shown below the lg breakpoint (mobile/tablet); hidden on
+              desktop where the 4th grid card serves as View All instead. */}
           <button
             onClick={() => navigate('/resources/drive')}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 text-sm border border-gray-700"
+            className="flex lg:hidden items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-900 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 text-sm border border-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-800"
           >
             <span className="text-lg">→</span>
             View All
           </button>
         </div>
 
-        {/* ✅ Show only 4 folders as preview */}
         {loading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map(i => (
+            {[1, 2, 3, 4].map((i) => (
               <div key={i} className="bg-gray-200 rounded-xl h-32 animate-pulse"></div>
             ))}
           </div>
@@ -56,25 +65,32 @@ function Resources() {
               Retry
             </button>
           </div>
+        ) : previewFolders.length === 0 ? (
+          <div className="bg-gray-50 border-2 border-gray-300 rounded-xl p-8 text-center">
+            <p className="text-3xl mb-2">🗂️</p>
+            <p className="text-gray-500 text-sm">No folders here yet</p>
+          </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {previewFolders.map((folder) => (
               <DriveFolderCard
                 key={folder.id}
                 title={folder.name}
-                count={`${folder.files?.length || 0} files`}
+                count="Open folder"
                 onClick={() => navigate(`/resources/drive/${folder.id}`)}
               />
             ))}
-            {/* ✅ "View All" card as the 4th slot if there are fewer than 4 folders */}
-            {previewFolders.length < 4 && (
+            {hasMoreFolders && (
               <button
                 onClick={() => navigate('/resources/drive')}
-                className="bg-gray-800 text-white border-2 border-gray-800 rounded-xl p-6 text-center hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex flex-col items-center justify-center col-span-1"
+                className="bg-gray-800 text-white border-2 border-gray-800 rounded-xl p-6 text-center hover:bg-gray-700 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] flex flex-col items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-800"
+                aria-label={`View all folders, ${remainingCount} more`}
               >
                 <span className="text-4xl">→</span>
                 <p className="mt-2 text-sm font-bold">View All</p>
-                <p className="text-xs text-gray-400">Browse all folders</p>
+                <p className="text-xs text-gray-400">
+                  {remainingCount} more folder{remainingCount === 1 ? '' : 's'}
+                </p>
               </button>
             )}
           </div>
@@ -104,26 +120,7 @@ function Resources() {
       {/* Syllabus & Academic Calendar */}
       <div className="space-y-4">
         <SectionHeader icon="📚" title="Syllabus & Academic Calendar" />
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Link
-            to="/academics/subjects"
-            className="bg-white border-2 border-gray-800 rounded-xl p-6 text-center hover:shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] block"
-          >
-            <div className="text-4xl mb-2">📖</div>
-            <h3 className="text-sm font-bold text-gray-900">View Full Syllabus</h3>
-            <p className="text-xs text-gray-500">Complete semester syllabus with modules & resources</p>
-            <div className="mt-3 text-xs font-medium text-gray-400">Click to view →</div>
-          </Link>
-          <Link
-            to="/academics/calendar"
-            className="bg-white border-2 border-gray-800 rounded-xl p-6 text-center hover:shadow-lg transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] block"
-          >
-            <div className="text-4xl mb-2">📅</div>
-            <h3 className="text-sm font-bold text-gray-900">Academic Calendar</h3>
-            <p className="text-xs text-gray-500">Upcoming events, holidays & deadlines</p>
-            <div className="mt-3 text-xs font-medium text-gray-400">Click to view →</div>
-          </Link>
-        </div>
+        <InfoCards />
       </div>
 
     </div>

@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
   
   const isFirebase = process.env.FIREBASE === 'true'; // optional: set this in Firebase's build settings
   
-  const base = (isCloudHost || isFirebase || mode === 'production' && !process.env.GH_PAGES) ? '/' : '/class-portal/';
+  const base = (isCloudHost || isFirebase || mode === 'production' && !process.env.GH_PAGES) ? '/' : '/';
 
   return {
     plugins: [react(), tailwindcss()],
