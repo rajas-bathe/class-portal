@@ -10,7 +10,7 @@ export const forms = [
   {
     id: 2,
     icon: '🎓',
-    title: 'Internship Application Form',
+    title: 'General Application Form',
     description: 'Internship approval & application',
     fileUrl: '#',
     size: '32KB'

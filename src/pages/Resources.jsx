@@ -94,7 +94,8 @@ function Resources() {
         )}
       </div>
 
-      {/* Document Templates */}
+        
+      {/* Document Templates 
       <div className="space-y-4">
         <SectionHeader icon="📄" title="Document Templates" />
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -102,9 +103,9 @@ function Resources() {
             <DocCard key={template.id} {...template} type="template" />
           ))}
         </div>
-      </div>
+      </div> */}
 
-      {/* Common Forms */}
+      {/* Common Forms 
       <div className="space-y-4">
         <SectionHeader icon="📋" title="Common Forms" />
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -112,7 +113,7 @@ function Resources() {
             <DocCard key={form.id} {...form} type="form" />
           ))}
         </div>
-      </div>
+      </div> */}
 
       {/* Syllabus & Academic Calendar */}
       <div className="space-y-4">

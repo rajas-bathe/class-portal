@@ -109,15 +109,6 @@ function MobileSchedule({ days, periods, today, getFilteredItemsForPeriod }) {
     return start <= currentTime && end >= currentTime;
   };
 
-  const getDayClassCount = (day) => {
-    let count = 0;
-    periods.forEach(period => {
-      const items = getFilteredItemsForPeriod(day, period.time);
-      if (items.length > 0) count++;
-    });
-    return count;
-  };
-
   // Infinite scroll helpers
   const totalDays = days.length;
 
@@ -138,18 +129,15 @@ function MobileSchedule({ days, periods, today, getFilteredItemsForPeriod }) {
     setCurrentIndex((prev) => (prev + 1) % totalDays);
   };
 
-  // Keyboard support (optional)
-  // Could add left/right arrow key listeners
-
   return (
     <div className="space-y-4">
-      {/* Day Selector — Infinite 3-Day View */}
+      {/* Day Selector — Smaller & without class count */}
       <div className="bg-white border-2 border-gray-800 rounded-xl p-3">
         <div className="flex items-center gap-2">
           {/* Left Arrow */}
           <button
             onClick={goBack}
-            className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center text-lg font-bold bg-gray-100 text-gray-800 hover:bg-gray-200 active:scale-95 transition-all duration-200 touch-manipulation"
+            className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-base font-bold bg-gray-100 text-gray-800 hover:bg-gray-200 active:scale-95 transition-all duration-200 touch-manipulation"
             aria-label="Previous day"
           >
             ‹
@@ -159,7 +147,6 @@ function MobileSchedule({ days, periods, today, getFilteredItemsForPeriod }) {
           <div className="flex-1 grid grid-cols-3 gap-1.5">
             {visibleIndices.map((idx) => {
               const day = days[idx];
-              const classCount = getDayClassCount(day);
               const isActive = idx === currentIndex;
               const isTodayDay = day === today;
               
@@ -168,25 +155,22 @@ function MobileSchedule({ days, periods, today, getFilteredItemsForPeriod }) {
                   key={day}
                   onClick={() => setCurrentIndex(idx)}
                   className={`
-                    py-3 px-1 rounded-lg text-center
+                    py-2 px-1 rounded-lg text-center
                     transition-all duration-200 touch-manipulation
                     ${isActive 
-                      ? 'bg-gray-800 text-white shadow-lg scale-[1.02]' 
+                      ? 'bg-gray-800 text-white shadow-sm' 
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}
-                    border-2 border-transparent
+                    border border-transparent
                     ${isActive ? 'border-gray-800' : 'hover:border-gray-300'}
                     relative
                   `}
                 >
-                  <div className="text-sm font-bold">
+                  <div className="text-xs font-bold uppercase tracking-wide">
                     {getDayShort(day)}
-                  </div>
-                  <div className="text-[10px] opacity-70">
-                    {classCount} cls
                   </div>
                   {isTodayDay && (
                     <span className={`
-                      absolute -top-1 -right-1 w-3 h-3 rounded-full 
+                      absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full 
                       ${isActive ? 'bg-green-400' : 'bg-green-500'}
                       border-2 border-white
                     `}></span>
@@ -199,7 +183,7 @@ function MobileSchedule({ days, periods, today, getFilteredItemsForPeriod }) {
           {/* Right Arrow */}
           <button
             onClick={goForward}
-            className="flex-shrink-0 w-10 h-10 rounded-lg flex items-center justify-center text-lg font-bold bg-gray-100 text-gray-800 hover:bg-gray-200 active:scale-95 transition-all duration-200 touch-manipulation"
+            className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-base font-bold bg-gray-100 text-gray-800 hover:bg-gray-200 active:scale-95 transition-all duration-200 touch-manipulation"
             aria-label="Next day"
           >
             ›

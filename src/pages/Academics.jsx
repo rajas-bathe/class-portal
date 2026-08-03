@@ -23,14 +23,14 @@ function Academics() {
       
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
-        <div>
+        {/* <div>
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight leading-tight">
             Academics
           </h1>
           <p className="text-sm text-gray-500">
             Your class schedule and timetable
           </p>
-        </div>
+        </div> */}
         <div className="flex-shrink-0 pb-0.5">
           <ViewToggle viewMode={viewMode} setViewMode={setViewMode} />
         </div>
@@ -59,7 +59,7 @@ function Academics() {
       {/* Exam Timetable */}
       <ExamTimetable />
 
-      {/* 🔥 NEW: Clickable Info Cards */}
+      {/* Clickable Info Cards */}
       <InfoCards />
 
     </div>
