@@ -15,10 +15,7 @@ function Resources() {
   const galleryFolderId = import.meta.env.VITE_GALLERY_FOLDER_ID;
 
   // Fetch Drive folders for the preview strip. If there are more than 4,
-  // show only the first 3 real folders and use the 4th slot as a
-  // dedicated "View All" card — so the affordance to see more lives in
-  // the grid itself rather than as a separate line below it. If there
-  // are 4 or fewer, show all of them as real folder cards.
+
   const { items, loading, error } = useDrive(driveFolderId, galleryFolderId);
   const allFolders = items.folders || [];
   const hasMoreFolders = allFolders.length > 4;

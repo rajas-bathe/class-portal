@@ -7,13 +7,13 @@ function AcademicCalendarView() {
 
   return (
     <div className="p-4 md:p-6 max-w-4xl mx-auto space-y-6">
-      
+
       {/* Back Button */}
       <button
-        onClick={() => navigate('/resources')}
+        onClick={() => navigate(-1)}
         className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
       >
-        ← Back to Resources
+        ← Back
       </button>
 
       {/* Page Header */}

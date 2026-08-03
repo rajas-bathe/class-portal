@@ -10,13 +10,13 @@ function SubjectDetail() {
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
-      
+
       {/* Back Button */}
       <button
-        onClick={() => navigate('/academics')}
+        onClick={() => navigate(-1)}
         className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
       >
-        ← Back to Academics
+        ← Back
       </button>
 
       {/* Page Header */}
@@ -35,8 +35,8 @@ function SubjectDetail() {
             onClick={() => setSelectedSubjectId(subject.id)}
             className={`
               px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border-2
-              ${selectedSubjectId === subject.id 
-                ? 'bg-gray-800 text-white border-gray-800' 
+              ${selectedSubjectId === subject.id
+                ? 'bg-gray-800 text-white border-gray-800'
                 : 'bg-white text-gray-700 border-gray-300 hover:border-gray-800'}
             `}
           >
@@ -48,7 +48,7 @@ function SubjectDetail() {
       {/* Subject Detail Card — Only shows for selected subject */}
       {selectedSubject && (
         <div className="bg-white border-2 border-gray-800 rounded-xl overflow-hidden">
-          
+
           {/* Subject Header */}
           <div className="bg-gray-100 border-b-2 border-gray-800 px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
             <div>
