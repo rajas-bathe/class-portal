@@ -1,7 +1,6 @@
 import React from 'react';
-import { useAnnouncementsAirtable } from '../hooks/useAnnouncementsAirtable';
-import QuickLinks from '../components/dashboard/QuickLinks';
-import AnnouncementsWidget from '../components/dashboard/AnnouncementsWidget';
+import QuickLinks from './QuickLinks';
+import AnnouncementsWidget from './AnnouncementsWidget';
 
 function MoonIcon() {
   return (
@@ -11,21 +10,16 @@ function MoonIcon() {
   );
 }
 
-function DashboardMobile() {
-  const { items: announcements } = useAnnouncementsAirtable();
-
-  const today = new Date();
+// Pure presentational — no data fetching, receives everything as props.
+function MobileDashboardView({ greeting, today, announcements }) {
   const formattedDate = today.toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'short',
     day: 'numeric',
   });
 
-  const hour = today.getHours();
-  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
-
   return (
-    <div className="p-4 space-y-5">
+    <div className="space-y-5">
 
       <div className="flex justify-between items-center">
         <div>
@@ -59,4 +53,4 @@ function DashboardMobile() {
   );
 }
 
-export default DashboardMobile;
+export default MobileDashboardView;
