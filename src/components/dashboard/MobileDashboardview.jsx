@@ -21,15 +21,20 @@ function MobileDashboardView({ greeting, today, announcements }) {
   return (
     <div className="space-y-6">
 
-      {/* Header */}
-      <div className="flex justify-between items-start gap-3">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">
-            👋 {greeting.charAt(0).toUpperCase() + greeting.slice(1)}
-          </h1>
-          <p className="text-sm text-gray-600 font-medium">{formattedDate}</p>
-        </div>
-        <div className="flex items-center gap-2">
+      {/* ========== Header – now a single line ========== 
+      <div className="flex items-center justify-between gap-3">
+        {/* Left: greeting with emoji
+        <h1 className="text-2xl font-bold text-gray-900 whitespace-nowrap">
+          👋 {greeting.charAt(0).toUpperCase() + greeting.slice(1)}
+        </h1>  
+
+        {/* Right: date + icons (optional) 
+        <div className="flex items-center gap-3">
+          <p className="text-sm text-gray-600 font-medium whitespace-nowrap">
+            {formattedDate}
+          </p> 
+          {/* Uncomment the buttons if you want them */}
+          {/*
           <button
             type="button"
             className="w-9 h-9 rounded-full border-2 border-gray-300 flex items-center justify-center bg-white hover:bg-gray-50 transition-colors text-gray-700 hover:scale-105 active:scale-95"
@@ -40,8 +45,9 @@ function MobileDashboardView({ greeting, today, announcements }) {
           <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border-2 border-white shadow-md flex items-center justify-center text-xs font-bold text-white">
             P
           </div>
-        </div>
-      </div>
+          
+        </div> 
+      </div> */}
 
       {/* Quick Links */}
       <div className="space-y-3">
