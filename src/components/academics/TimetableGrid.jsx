@@ -357,7 +357,7 @@ function TimetableGrid({
         </div>
       </div>
 
-      {/* Signature Section */}
+      {/* Signature Section 
       <div className="p-3 md:p-4 border-t-2 border-gray-800 bg-gray-100 flex flex-wrap justify-between items-center text-xs md:text-sm text-gray-900">
         <div className="flex flex-col items-center min-w-[60px] md:min-w-[80px]">
           <div className="w-20 md:w-48 h-8 md:h-10 border-b-2 border-gray-800"></div>
@@ -371,7 +371,7 @@ function TimetableGrid({
           <div className="w-20 md:w-48 h-8 md:h-10 border-b-2 border-gray-800"></div>
           <span className="mt-1 font-semibold text-[10px] md:text-sm">Principal</span>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

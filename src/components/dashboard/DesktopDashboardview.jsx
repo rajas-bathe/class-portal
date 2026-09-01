@@ -3,13 +3,6 @@ import { Link } from 'react-router-dom';
 import QuickLinks from './QuickLinks';
 import AnnouncementsWidget from './AnnouncementsWidget';
 
-function MoonIcon() {
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 12.79 A9 9 0 1 1 11.21 3 A7 7 0 0 0 21 12.79 Z" />
-    </svg>
-  );
-}
 
 function DesktopDashboardView({ greeting, today, announcements, examDates, classInfo }) {
   const formattedDate = today.toLocaleDateString('en-US', {
@@ -21,30 +14,6 @@ function DesktopDashboardView({ greeting, today, announcements, examDates, class
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-8">
-
-      {/* Header Section */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 tracking-tight mb-1">
-            👋 {greeting.charAt(0).toUpperCase() + greeting.slice(1)}
-          </h1>
-          <p className="text-sm md:text-base text-gray-600">
-            {formattedDate} &middot; <span className="font-semibold">Semester III</span>
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            className="flex items-center gap-2 px-4 py-2.5 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 text-sm border border-gray-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-gray-800"
-          >
-            <MoonIcon />
-            Dark mode
-          </button>
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 border-2 border-white shadow-md flex items-center justify-center text-sm font-bold text-white">
-            P
-          </div>
-        </div>
-      </div>
 
       {/* Quick Links Section */}
       <div className="space-y-4">
