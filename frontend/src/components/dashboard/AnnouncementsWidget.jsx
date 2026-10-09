@@ -30,6 +30,10 @@ function FileIcon() {
 function AnnouncementRow({ item, thumbSize }) {
   const category = (item.category || 'general').toLowerCase();
   const badgeClass = CATEGORY_STYLES[category] || CATEGORY_STYLES.general;
+  const image = item.imageUrl || item.image;
+  const body = item.message || item.body;
+  const author = item.sender || item.author || 'Admin';
+  const createdAt = item.time || item.createdAt;
 
   return (
     <Link
@@ -39,10 +43,10 @@ function AnnouncementRow({ item, thumbSize }) {
       <div
         className={`${thumbSize} flex-shrink-0 rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden text-gray-400`}
       >
-        {item.image ? (
+        {image ? (
           <img
-            src={item.image}
-            alt=""
+            src={image}
+            alt={item.title || ''}
             className="w-full h-full object-cover"
           />
         ) : (
@@ -58,13 +62,13 @@ function AnnouncementRow({ item, thumbSize }) {
             {item.category || 'General'}
           </span>
         </div>
-        {item.body && (
+        {body && (
           <p className="text-xs text-gray-600 truncate mb-1.5">
-            {item.body}
+            {body}
           </p>
         )}
         <p className="text-[11px] text-gray-500 font-medium">
-          {item.author || 'Admin'} &middot; {timeAgo(item.createdAt)}
+          {author} &middot; {timeAgo(createdAt)}
         </p>
       </div>
     </Link>

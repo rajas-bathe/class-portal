@@ -34,16 +34,32 @@ export function useAnnouncementsAirtable() {
         const records = data.records.map((record) => {
           const fields = record.fields;
 
+          // Check common attachment field names (Upload, Attachments, Image, etc.)
+          const attachmentField = fields.Upload || fields.upload || fields.Attachments || fields.attachments || fields.Attachment || fields.attachment || fields.Image || fields.image || fields.Photo || fields.photo;
+          const imageUrl = Array.isArray(attachmentField) && attachmentField.length > 0
+            ? attachmentField[0].url
+            : (typeof attachmentField === 'string' ? attachmentField : '');
+
+          const title = fields.Title || fields.title || fields.Question || fields.question || 'Untitled';
+          const message = fields.Message || fields.message || fields.Body || fields.body || '';
+          const sender = fields.Sender || fields.sender || fields.Author || fields.author || 'Admin';
+          const category = fields.Category || fields.category || 'General';
+          const priority = fields.Priority || fields.priority || 'Medium';
+          const time = record.createdTime || new Date().toISOString();
+
           return {
             id: record.id,
-            title: fields.Title || fields.title || fields.Question || fields.question || 'Untitled',
-            message: fields.Message || fields.message || '',
-            sender: fields.Sender || fields.sender || 'Admin',
-            category: fields.Category || fields.category || 'General',
-            priority: fields.Priority || fields.priority || 'Medium',
-            // ✅ Store the actual createdTime from Airtable
-            time: record.createdTime || new Date().toISOString(),
-            imageUrl: fields.Upload && fields.Upload.length > 0 ? fields.Upload[0].url : '',
+            title,
+            message,
+            body: message,
+            sender,
+            author: sender,
+            category,
+            priority,
+            time,
+            createdAt: time,
+            imageUrl,
+            image: imageUrl,
           };
         });
 
