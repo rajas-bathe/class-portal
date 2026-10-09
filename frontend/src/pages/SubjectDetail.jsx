@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { subjectData } from '../data/subjectData';
 
@@ -6,15 +6,14 @@ function SubjectDetail() {
   const navigate = useNavigate();
   const [selectedSubjectId, setSelectedSubjectId] = useState(subjectData[0]?.id || 1);
 
-  const selectedSubject = subjectData.find(s => s.id === selectedSubjectId);
+  const selectedSubject = subjectData.find((s) => s.id === selectedSubjectId);
 
   return (
-    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
-
+    <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-6">
       {/* Back Button */}
       <button
         onClick={() => navigate(-1)}
-        className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
+        className="flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-gray-900 transition-colors"
       >
         ← Back
       </button>
@@ -22,90 +21,96 @@ function SubjectDetail() {
       {/* Page Header */}
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
-          📋 Subject Information
+          📋 Subject Syllabus
         </h1>
-        <p className="text-sm text-gray-500">Select a subject to view its syllabus, marking scheme & resources</p>
+        <p className="text-sm text-gray-600 mt-1">
+          Select a subject to view its complete module-wise syllabus & sub-topics
+        </p>
       </div>
 
-      {/* Subject Buttons — Like Day Selector */}
-      <div className="flex flex-wrap gap-2">
-        {subjectData.map((subject) => (
-          <button
-            key={subject.id}
-            onClick={() => setSelectedSubjectId(subject.id)}
-            className={`
-              px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 border-2
-              ${selectedSubjectId === subject.id
-                ? 'bg-gray-800 text-white border-gray-800'
-                : 'bg-white text-gray-700 border-gray-300 hover:border-gray-800'}
-            `}
-          >
-            {subject.code}
-          </button>
-        ))}
-      </div>
-
-      {/* Subject Detail Card — Only shows for selected subject */}
-      {selectedSubject && (
-        <div className="bg-white border-2 border-gray-800 rounded-xl overflow-hidden">
-
-          {/* Subject Header */}
-          <div className="bg-gray-100 border-b-2 border-gray-800 px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <div>
-              <span className="text-sm font-bold text-gray-500">{selectedSubject.code}</span>
-              <h2 className="text-lg font-bold text-gray-900">{selectedSubject.name}</h2>
-            </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <span className="text-xs bg-gray-200 px-2 py-0.5 rounded-full font-medium text-gray-700">
-                {selectedSubject.credits} Credits
+      {/* Subject Buttons Selector — 2x2 Grid on Mobile, Flex on Desktop */}
+      <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-2.5">
+        {subjectData.map((subject) => {
+          const isSelected = selectedSubjectId === subject.id;
+          return (
+            <button
+              key={subject.id}
+              onClick={() => setSelectedSubjectId(subject.id)}
+              className={`
+                p-2.5 sm:px-5 sm:py-2.5 rounded-lg transition-all duration-150 border-2 flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-2 text-center
+                ${
+                  isSelected
+                    ? 'bg-gray-800 text-white border-gray-800 shadow-md'
+                    : 'bg-white text-gray-700 border-gray-300 hover:border-gray-800 hover:bg-gray-50'
+                }
+              `}
+            >
+              <span className="font-extrabold text-sm">{subject.code}</span>
+              <span className="text-[11px] sm:text-sm font-medium opacity-90 truncate max-w-full">
+                {subject.name}
               </span>
-              <span className="text-xs text-gray-600">{selectedSubject.faculty}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Subject Module & Syllabus Card */}
+      {selectedSubject && (
+        <div className="bg-white border-2 border-gray-800 rounded-xl overflow-hidden shadow-sm">
+          {/* Header */}
+          <div className="bg-yellow-300 border-b-2 border-gray-800 px-5 py-3 flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <span className="text-xs font-mono font-bold text-gray-800 bg-white/80 border border-gray-800/30 px-2 py-0.5 rounded">
+                {selectedSubject.courseCode}
+              </span>
+              <h2 className="text-lg md:text-xl font-bold text-gray-900 mt-1 tracking-tight">
+                {selectedSubject.name}
+              </h2>
             </div>
-          </div>
-
-          {/* Marking Scheme */}
-          <div className="px-4 py-3 border-b border-gray-200 flex flex-wrap gap-4">
-            <span className="text-xs font-semibold text-gray-500">Marking Scheme:</span>
-            <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">
-              CIA: {selectedSubject.marking.cia}%
-            </span>
-            <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">
-              MSE: {selectedSubject.marking.mse}%
-            </span>
-            <span className="text-xs bg-orange-50 text-orange-700 px-2 py-0.5 rounded-full">
-              ESE: {selectedSubject.marking.ese}%
+            <span className="text-xs font-bold bg-white border border-gray-800 px-3 py-1 rounded">
+              {selectedSubject.syllabus.length} Modules
             </span>
           </div>
 
-          {/* Syllabus */}
-          <div className="px-4 py-3 border-b border-gray-200">
-            <p className="text-xs font-semibold text-gray-500 mb-2">📖 Syllabus:</p>
-            <div className="space-y-2">
-              {selectedSubject.syllabus.map((module) => (
-                <div key={module.module} className="bg-gray-50 rounded-lg p-3 border border-gray-200">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-gray-600 bg-gray-200 px-2 py-0.5 rounded-full">
-                      Module {module.module}
+          {/* Modules List with Sub-topics */}
+          <div className="p-4 md:p-6 space-y-4">
+            {selectedSubject.syllabus.map((mod) => (
+              <div
+                key={mod.module}
+                className="border-2 border-gray-800 rounded-xl overflow-hidden shadow-xs"
+              >
+                {/* Module Bar */}
+                <div className="bg-gray-100 border-b-2 border-gray-800 px-4 py-2.5 flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-xs font-bold bg-gray-800 text-white px-2.5 py-0.5 rounded">
+                      Module {mod.module}
                     </span>
-                    <span className="text-sm font-medium text-gray-800">{module.topic}</span>
+                    <h3 className="text-sm md:text-base font-bold text-gray-900">
+                      {mod.topic}
+                    </h3>
                   </div>
-                  <p className="text-xs text-gray-600 mt-1">{module.details}</p>
+                  <span className="text-xs font-bold text-gray-800 bg-white border border-gray-800 px-2 py-0.5 rounded">
+                    ⏱️ {mod.hours} Hours
+                  </span>
                 </div>
-              ))}
-            </div>
-          </div>
 
-          {/* Resources */}
-          {selectedSubject.resources && selectedSubject.resources.length > 0 && (
-            <div className="px-4 py-3">
-              <p className="text-xs font-semibold text-gray-500 mb-1">📚 Resources:</p>
-              <ul className="list-disc list-inside text-xs text-gray-700 space-y-0.5">
-                {selectedSubject.resources.map((resource, idx) => (
-                  <li key={idx}>{resource}</li>
-                ))}
-              </ul>
-            </div>
-          )}
+                {/* Sub-topics */}
+                <div className="p-4 bg-white">
+                  <ul className="space-y-2">
+                    {mod.subtopics.map((sub, sIdx) => (
+                      <li
+                        key={sIdx}
+                        className="flex items-start gap-2.5 text-xs md:text-sm text-gray-800 leading-relaxed font-medium"
+                      >
+                        <span className="text-gray-400 font-bold select-none">•</span>
+                        <span>{sub}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
