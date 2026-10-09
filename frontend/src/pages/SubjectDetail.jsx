@@ -11,12 +11,15 @@ function SubjectDetail() {
   return (
     <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-6">
       {/* Back Button */}
-      <button
-        onClick={() => navigate(-1)}
-        className="flex items-center gap-2 text-sm font-bold text-gray-700 hover:text-gray-900 transition-colors"
-      >
-        ← Back
-      </button>
+      <div>
+        <button
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-800 rounded-xl text-xs md:text-sm font-bold text-gray-900 hover:bg-gray-100 shadow-xs hover:shadow-sm active:scale-95 transition-all group"
+        >
+          <span className="text-base transition-transform group-hover:-translate-x-1 leading-none font-extrabold">←</span>
+          <span>Back</span>
+        </button>
+      </div>
 
       {/* Page Header */}
       <div>

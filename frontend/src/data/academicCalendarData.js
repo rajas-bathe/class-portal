@@ -1,63 +1,53 @@
 // ─── Category Config ────────────────────────────────────────────────────────
-// Each category drives the colour of the mini-calendar cells AND the event rows.
+// Defines colors and labels matching the website's clean, high-contrast palette
 export const CATEGORY_CONFIG = {
   holiday: {
     label: 'Holiday',
-    bg: 'bg-red-50',
-    border: 'border-red-200',
-    text: 'text-red-800',
+    badge: 'bg-red-100 text-red-800 border-red-300',
+    leftBorder: 'border-l-red-500',
     dot: 'bg-red-500',
-    calCell: 'bg-red-500 text-white',
+    calCell: 'bg-red-500 text-white font-bold',
   },
   exam: {
     label: 'Examination',
-    bg: 'bg-blue-50',
-    border: 'border-blue-200',
-    text: 'text-blue-800',
-    dot: 'bg-blue-500',
-    calCell: 'bg-blue-500 text-white',
+    badge: 'bg-blue-100 text-blue-800 border-blue-300',
+    leftBorder: 'border-l-blue-600',
+    dot: 'bg-blue-600',
+    calCell: 'bg-blue-600 text-white font-bold',
   },
   important: {
     label: 'Academic',
-    bg: 'bg-amber-50',
-    border: 'border-amber-200',
-    text: 'text-amber-900',
+    badge: 'bg-amber-100 text-amber-900 border-amber-300',
+    leftBorder: 'border-l-amber-500',
     dot: 'bg-amber-500',
-    calCell: 'bg-amber-400 text-white',
+    calCell: 'bg-amber-400 text-gray-900 font-bold',
   },
   meeting: {
     label: 'Meeting',
-    bg: 'bg-purple-50',
-    border: 'border-purple-200',
-    text: 'text-purple-800',
+    badge: 'bg-purple-100 text-purple-800 border-purple-300',
+    leftBorder: 'border-l-purple-500',
     dot: 'bg-purple-500',
-    calCell: 'bg-purple-500 text-white',
+    calCell: 'bg-purple-500 text-white font-bold',
   },
   attendance: {
     label: 'Attendance',
-    bg: 'bg-green-50',
-    border: 'border-green-200',
-    text: 'text-green-800',
-    dot: 'bg-green-500',
-    calCell: 'bg-green-500 text-white',
+    badge: 'bg-emerald-100 text-emerald-800 border-emerald-300',
+    leftBorder: 'border-l-emerald-500',
+    dot: 'bg-emerald-500',
+    calCell: 'bg-emerald-500 text-white font-bold',
   },
   review: {
     label: 'Project Review',
-    bg: 'bg-teal-50',
-    border: 'border-teal-200',
-    text: 'text-teal-800',
+    badge: 'bg-teal-100 text-teal-800 border-teal-300',
+    leftBorder: 'border-l-teal-500',
     dot: 'bg-teal-500',
-    calCell: 'bg-teal-500 text-white',
+    calCell: 'bg-teal-500 text-white font-bold',
   },
 };
 
 // ─── Calendar Data ───────────────────────────────────────────────────────────
-// Dates use YYYY-MM-DD format. endDate is inclusive.
 export const academicCalendarData = {
   title: 'Academic Calendar (SH-2026)',
-  subtitle:
-    'Applicable to UG B.Tech. (SEM-III, V, VII), UG B.Tech. WP (SEM V, VII), UG B.Voc. (SEM III, V), PG (SEM III), Ph.D. (SEM III Onwards)',
-
   months: [
     // ── JUNE 2026 ─────────────────────────────────────────────────────────────
     {
@@ -333,7 +323,6 @@ export const academicCalendarData = {
     },
   ],
 
-  // ─── Term Schedule ──────────────────────────────────────────────────────────
   termSchedule: [
     {
       srNo: 1,
