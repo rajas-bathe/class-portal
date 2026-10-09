@@ -74,12 +74,6 @@ function About() {
             href="mailto:rajasbathe9@gmail.com"
             className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors text-sm font-medium"
           >
-            <span>✉️</span> Email
-          </a>
-          <a
-            href="#"
-            className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors text-sm font-medium"
-          >
             <span>🔗</span> LinkedIn
           </a>
         </div>
