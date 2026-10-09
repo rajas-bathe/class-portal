@@ -17,7 +17,7 @@ function ViewToggle({ viewMode, setViewMode }) {
         📚 Lectures
       </button>
 
-      <button
+      {/* <button
         onClick={() => setViewMode('labs')}
         className={`
           flex-1 px-3 py-2 text-sm font-medium transition-all duration-150
@@ -41,8 +41,7 @@ function ViewToggle({ viewMode, setViewMode }) {
         `}
       >
         Timeline
-      </button>
-
+      </button> */}
     </div>
   );
 }
