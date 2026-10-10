@@ -49,20 +49,63 @@ function DesktopDashboardView({ greeting, today, announcements, loading, examDat
         {/* Sidebar - Reference Info */}
         <div className="space-y-5">
 
-          {/* Academic Calendar Card */}
-          <div className="bg-gradient-to-br from-orange-50 to-amber-50 border-2 border-orange-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
-            <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-              📅 Academic Calendar
-            </h3>
-            <div className="space-y-2.5">
-              {examDates.map((row) => (
-                <div key={row.label} className="flex justify-between items-center pb-2 border-b border-orange-100 last:border-0">
-                  <span className="text-sm font-medium text-gray-700">{row.label}</span>
-                  <span className="text-xs font-semibold text-orange-600 bg-white px-2.5 py-1 rounded-full">
-                    {row.date}
-                  </span>
+          {/* Academics Hub Card */}
+          <div className="bg-white border-2 border-gray-800 rounded-xl overflow-hidden shadow-sm">
+            <div className="bg-gray-100 border-b-2 border-gray-800 px-4 py-2.5 flex items-center justify-between">
+              <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                🎓 Academics Hub
+              </h3>
+              <span className="text-[11px] font-semibold text-gray-500 uppercase tracking-wide">
+                Quick Access
+              </span>
+            </div>
+
+            <div className="p-3 space-y-2.5">
+              {/* Academic Calendar Button */}
+              <Link
+                to="/academics/calendar"
+                className="group flex items-center justify-between p-3 rounded-lg border-2 border-gray-200 hover:border-gray-800 bg-white hover:bg-orange-50/60 transition-all duration-150 shadow-xs"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-orange-100 border border-orange-300 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
+                    📅
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-gray-900 group-hover:text-orange-950 transition-colors">
+                      Academic Calendar
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      Holidays, term schedule & deadlines
+                    </p>
+                  </div>
                 </div>
-              ))}
+                <span className="text-gray-400 group-hover:text-gray-900 group-hover:translate-x-1 transition-all duration-150 text-base font-bold ml-2">
+                  →
+                </span>
+              </Link>
+
+              {/* Subject Information Button */}
+              <Link
+                to="/academics/subjects"
+                className="group flex items-center justify-between p-3 rounded-lg border-2 border-gray-200 hover:border-gray-800 bg-white hover:bg-blue-50/60 transition-all duration-150 shadow-xs"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-blue-100 border border-blue-300 flex items-center justify-center text-xl shrink-0 group-hover:scale-105 transition-transform">
+                    📚
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-gray-900 group-hover:text-blue-950 transition-colors">
+                      Subject Information
+                    </div>
+                    <p className="text-xs text-gray-500">
+                      Sem-3 subjects, syllabus & marking scheme
+                    </p>
+                  </div>
+                </div>
+                <span className="text-gray-400 group-hover:text-gray-900 group-hover:translate-x-1 transition-all duration-150 text-base font-bold ml-2">
+                  →
+                </span>
+              </Link>
             </div>
           </div>
 
