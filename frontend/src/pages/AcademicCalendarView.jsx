@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { academicCalendarData, CATEGORY_CONFIG } from '../data/academicCalendarData';
 
@@ -304,6 +305,12 @@ function TermSchedule({ data }) {
 function AcademicCalendarView() {
   const navigate = useNavigate();
   const { title, months, termSchedule } = academicCalendarData;
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const main = document.querySelector('main');
+    if (main) main.scrollTop = 0;
+  }, []);
 
   return (
     <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-6">

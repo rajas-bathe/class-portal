@@ -1,318 +1,420 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useMemo } from 'react';
+import { getSubjectShort, isCurrentPeriod } from '../../utils/timetableHelpers';
 
-function MobileSchedule({ days, periods, today, getFilteredItemsForPeriod }) {
-  // Find today's index
-  const todayIndex = days.indexOf(today);
-  const [currentIndex, setCurrentIndex] = useState(todayIndex >= 0 ? todayIndex : 0);
+/**
+ * IMPORTANT LAYOUT INVARIANT — read before touching this file
+ * ---------------------------------------------------------------------
+ * HTML tables assign column position purely by left-to-right <td> order
+ * within a row — there is no such thing as "day 3's column" unless every
+ * row emits the exact same NUMBER of <td> elements for every day. If one
+ * day emits 1 <td> in a row while neighboring days emit 2, everything to
+ * its right silently shifts one column left for that row, even though
+ * each individual day's own rowSpan math was correct in isolation. This
+ * was the root cause of the misaligned columns in the previous version.
+ *
+ * Fix: every day ALWAYS contributes exactly ONE <td> group per period
+ * row — either:
+ *   - one unified <td colSpan={2}> when both batches share the same
+ *     class (or the period is empty), or
+ *   - two <td>s (A, B) when batches differ,
+ * and rowSpan is used to merge vertically within a day. The colSpan on
+ * the unified case reserves both grid columns, so total column count
+ * per row stays fixed at 2 (period+time) + 2*days.length regardless of
+ * which days are unified vs split that row.
+ */
+function buildDayColumn(day, periods, getFilteredItemsForPeriod) {
+  const periodItems = periods.map((p) => (p.isBreak ? [] : getFilteredItemsForPeriod(day, p.time)));
 
-  const getDayItems = (day) => {
-    const items = [];
-    periods.forEach(period => {
-      if (period.isBreak) {
-        items.push({ period: period.number, time: period.time, items: [], isBreak: true });
-        return;
-      }
-      const dayItems = getFilteredItemsForPeriod(day, period.time);
-      if (dayItems.length > 0) {
-        items.push({
-          period: period.number,
-          time: period.time,
-          items: dayItems,
-          isBreak: false
-        });
-      }
+  const keyOf = (item) => `${item.subject}|${item.teacher}|${item.room}`;
+
+  const groupByBatch = (items) => {
+    const out = { A: null, B: null };
+    items.forEach((item) => {
+      if (item.batch === 'A') out.A = item;
+      else if (item.batch === 'B') out.B = item;
     });
-    return items;
+    return out;
   };
 
-  const selectedDay = days[currentIndex];
-  const dayItems = getDayItems(selectedDay);
-  const isToday = selectedDay === today;
+  const grouped = periodItems.map(groupByBatch);
 
-  const getShortSubject = (subject) => {
-    const map = {
-      'Microprocessor': 'MP',
-      'Operating System': 'OS',
-      'Foundation of Embedded System': 'FES',
-      'Engineering Career Navigation': 'ECN',
-      'Indian Philosophical Systems': 'IKS: IPS',
-      'Sanskrit and Computational Linguistics': 'IKS: SCL',
-    };
-    return map[subject] || subject;
-  };
+  // unified[i] = true if this period's A and B are the same class (or
+  // both empty) and should render as one merged cell.
+  const unified = grouped.map((g) => {
+    if (!g.A && !g.B) return true; // empty period
+    if (g.A && g.B && keyOf(g.A) === keyOf(g.B)) return true; // same class
+    return false;
+  });
 
-  const getDayShort = (day) => day.slice(0, 3);
+  const rowSpan = periods.map(() => 1);
+  const skip = periods.map(() => false); // whole-row skip, for unified runs
+  const rowSpanFor = periods.map(() => ({ A: 1, B: 1 }));
+  const skipSlot = periods.map(() => ({ A: false, B: false })); // per-slot skip, for split runs
 
-  const keyOf = (it) => `${it.subject}|${it.teacher}|${it.room}`;
-
-  const sameContent = (itemsA, itemsB) => {
-    if (itemsA.length !== itemsB.length) return false;
-    const mapA = {};
-    itemsA.forEach((it) => { mapA[it.batch || 'A'] = keyOf(it); });
-    const mapB = {};
-    itemsB.forEach((it) => { mapB[it.batch || 'A'] = keyOf(it); });
-    const batchesA = Object.keys(mapA).sort();
-    const batchesB = Object.keys(mapB).sort();
-    if (batchesA.join(',') !== batchesB.join(',')) return false;
-    return batchesA.every((b) => mapA[b] === mapB[b]);
-  };
-
-  // Merge consecutive periods (no break/gap between them) that have the
-  // exact same class(es) scheduled into a single block — mirrors the
-  // desktop grid's rowSpan behaviour for a lecture spanning multiple hours.
-  const groupConsecutivePeriods = (entries) => {
-    const groups = [];
-    let i = 0;
-    while (i < entries.length) {
-      if (entries[i].isBreak) {
-        groups.push({
-          isBreak: true,
-          periodStart: entries[i].period,
-          periodEnd: entries[i].period,
-          time: entries[i].time,
-          items: [],
-        });
-        i += 1;
-        continue;
-      }
+  let i = 0;
+  while (i < periods.length) {
+    if (periods[i].isBreak) {
+      i += 1;
+      continue;
+    }
+    if (unified[i]) {
+      const cur = grouped[i].A; // representative content (or null if empty)
+      const curKey = cur ? keyOf(cur) : null;
       let j = i + 1;
       while (
-        j < entries.length &&
-        !entries[j].isBreak &&
-        entries[j].period === entries[j - 1].period + 1 &&
-        sameContent(entries[i].items, entries[j].items)
+        j < periods.length &&
+        !periods[j].isBreak &&
+        unified[j] &&
+        (grouped[j].A ? keyOf(grouped[j].A) : null) === curKey
       ) {
+        skip[j] = true;
         j += 1;
       }
-      const block = entries.slice(i, j);
-      const startTime = block[0].time.split('-')[0];
-      const endTime = block[block.length - 1].time.split('-')[1];
-      groups.push({
-        isBreak: false,
-        periodStart: block[0].period,
-        periodEnd: block[block.length - 1].period,
-        time: `${startTime}-${endTime}`,
-        items: block[0].items,
-      });
+      rowSpan[i] = j - i;
       i = j;
+      continue;
     }
-    return groups;
-  };
 
-  const dayBlocks = useMemo(() => groupConsecutivePeriods(dayItems), [dayItems]);
-  const hasClasses = dayItems.some((entry) => !entry.isBreak);
+    // Split period (A != B). Merge each slot independently, but only
+    // through a run of periods that are ALSO split (never merge a split
+    // slot's run into a neighboring unified period).
+    const slotSpan = { A: 1, B: 1 };
+    ['A', 'B'].forEach((slot) => {
+      const cur = grouped[i][slot];
+      let k = i + 1;
+      if (!cur) {
+        while (
+          k < periods.length &&
+          !periods[k].isBreak &&
+          !unified[k] &&
+          !grouped[k][slot]
+        ) {
+          skipSlot[k][slot] = true;
+          k += 1;
+        }
+      } else {
+        while (
+          k < periods.length &&
+          !periods[k].isBreak &&
+          !unified[k] &&
+          grouped[k][slot] &&
+          keyOf(grouped[k][slot]) === keyOf(cur)
+        ) {
+          skipSlot[k][slot] = true;
+          k += 1;
+        }
+      }
+      slotSpan[slot] = k - i;
+    });
+    rowSpanFor[i].A = slotSpan.A;
+    rowSpanFor[i].B = slotSpan.B;
+    i += 1;
+  }
 
-  const isClassLive = (time) => {
-    if (!isToday) return false;
-    const now = new Date();
-    const currentTime = now.toTimeString().slice(0, 5);
-    const [start, end] = time.split('-');
-    return start <= currentTime && end >= currentTime;
-  };
+  return { grouped, unified, rowSpan, skip, rowSpanFor, skipSlot };
+}
 
-  // Infinite scroll helpers
-  const totalDays = days.length;
-
-  const getVisibleIndices = useCallback((centerIdx) => {
-    const prev = (centerIdx - 1 + totalDays) % totalDays;
-    const curr = centerIdx;
-    const next = (centerIdx + 1) % totalDays;
-    return [prev, curr, next];
-  }, [totalDays]);
-
-  const visibleIndices = useMemo(() => getVisibleIndices(currentIndex), [currentIndex, getVisibleIndices]);
-
-  const goBack = () => {
-    setCurrentIndex((prev) => (prev - 1 + totalDays) % totalDays);
-  };
-
-  const goForward = () => {
-    setCurrentIndex((prev) => (prev + 1) % totalDays);
-  };
-
+function SubjectBlock({ item }) {
+  if (!item) return null;
+  const shortName = getSubjectShort(item.subject);
   return (
-    <div className="space-y-4">
-      {/* Day Selector — Smaller & without class count */}
-      <div className="bg-white border-2 border-gray-800 rounded-xl p-3">
-        <div className="flex items-center gap-2">
-          {/* Left Arrow */}
-          <button
-            onClick={goBack}
-            className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-base font-bold bg-gray-100 text-gray-800 hover:bg-gray-200 active:scale-95 transition-all duration-200 touch-manipulation"
-            aria-label="Previous day"
-          >
-            ‹
-          </button>
-
-          {/* Day Buttons — 3 visible days in circular order */}
-          <div className="flex-1 grid grid-cols-3 gap-1.5">
-            {visibleIndices.map((idx) => {
-              const day = days[idx];
-              const isActive = idx === currentIndex;
-              const isTodayDay = day === today;
-              
-              return (
-                <button
-                  key={day}
-                  onClick={() => setCurrentIndex(idx)}
-                  className={`
-                    py-2 px-1 rounded-lg text-center
-                    transition-all duration-200 touch-manipulation
-                    ${isActive 
-                      ? 'bg-gray-800 text-white shadow-sm' 
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}
-                    border border-transparent
-                    ${isActive ? 'border-gray-800' : 'hover:border-gray-300'}
-                    relative
-                  `}
-                >
-                  <div className="text-xs font-bold uppercase tracking-wide">
-                    {getDayShort(day)}
-                  </div>
-                  {isTodayDay && (
-                    <span className={`
-                      absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full 
-                      ${isActive ? 'bg-green-400' : 'bg-green-500'}
-                      border-2 border-white
-                    `}></span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Right Arrow */}
-          <button
-            onClick={goForward}
-            className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-base font-bold bg-gray-100 text-gray-800 hover:bg-gray-200 active:scale-95 transition-all duration-200 touch-manipulation"
-            aria-label="Next day"
-          >
-            ›
-          </button>
-        </div>
+    <div className="leading-tight text-center">
+      <div className="font-semibold text-gray-900">{shortName}</div>
+      <div className="text-gray-600 text-[9px] md:text-xs">
+        /{item.teacher} &middot; {item.room}
       </div>
-
-      {/* Schedule Card — All periods and break unified inside a single cohesive container */}
-      {hasClasses ? (
-        <div className="bg-white border-2 border-gray-800 rounded-xl overflow-hidden shadow-sm divide-y-2 divide-gray-800">
-          {/* Top Header Strip (Grey Rectangle) */}
-          <div className="bg-gray-100 px-4 py-2.5 flex items-center justify-between">
-            <span className="text-sm font-bold text-gray-900 flex items-center gap-2">
-              📅 {selectedDay}&apos;s Schedule
-            </span>
-            {isToday ? (
-              <span className="text-[11px] font-bold text-green-700 bg-green-100 border border-green-300 px-2 py-0.5 rounded-full flex items-center gap-1">
-                <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                Today
-              </span>
-            ) : (
-              <span className="text-xs font-medium text-gray-500">
-                {dayBlocks.filter((b) => !b.isBreak).length} {dayBlocks.filter((b) => !b.isBreak).length === 1 ? 'Slot' : 'Slots'}
-              </span>
-            )}
-          </div>
-
-          {/* Schedule Blocks */}
-          {dayBlocks.map((block) => {
-            if (block.isBreak) {
-              return (
-                <div
-                  key={`break-${block.periodStart}`}
-                  className="bg-gray-200 px-4 py-2.5 flex items-center justify-between"
-                >
-                  <span className="text-xs sm:text-sm font-bold text-gray-800 font-mono">
-                    {block.time}
-                  </span>
-                  <span className="text-xs font-extrabold tracking-widest text-gray-600 uppercase">
-                    BREAK
-                  </span>
-                </div>
-              );
-            }
-
-            const isLive = isClassLive(block.time);
-            const periodLabel =
-              block.periodStart === block.periodEnd
-                ? `Period ${block.periodStart}`
-                : `Period ${block.periodStart}-${block.periodEnd}`;
-            const isUnified =
-              block.items.length === 1 ||
-              (block.items.length === 2 && keyOf(block.items[0]) === keyOf(block.items[1]));
-
-            return (
-              <div 
-                key={block.periodStart} 
-                className={`
-                  transition-colors duration-150
-                  ${isLive ? 'bg-yellow-50/70 border-l-4 border-l-green-500' : 'bg-white'}
-                `}
-              >
-                {/* Block Header */}
-                <div className={`
-                  flex items-center justify-between px-4 py-2
-                  ${isLive ? 'bg-yellow-100/70 border-b border-yellow-200' : 'bg-gray-50 border-b border-gray-200'}
-                `}>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs sm:text-sm font-bold text-gray-900 font-mono">
-                      {block.time}
-                    </span>
-                    {isLive && (
-                      <span className="flex items-center gap-1 text-[10px] font-bold text-green-700 bg-white border border-green-400 px-1.5 py-0.5 rounded-full">
-                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                        LIVE
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-[11px] sm:text-xs font-semibold text-gray-600">
-                    {periodLabel}
-                  </span>
-                </div>
-
-                {/* Class Items */}
-                {isUnified ? (
-                  <div className="p-3.5 flex flex-col items-center text-center">
-                    <span className="text-[10px] font-bold text-transparent mb-0.5 select-none" aria-hidden="true">A</span>
-                    <div className="text-sm font-bold text-gray-900">
-                      {getShortSubject(block.items[0].subject)}
-                    </div>
-                    <div className="text-xs text-gray-500 mt-0.5">
-                      {block.items[0].teacher} &middot; {block.items[0].room}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-2 divide-x-2 divide-gray-200">
-                    {block.items.map((item, idx) => {
-                      const batch = item.batch || 'A';
-                      const shortName = getShortSubject(item.subject);
-                      return (
-                        <div key={idx} className="p-3 flex flex-col items-center text-center">
-                          <span className="text-[10px] font-bold text-gray-500 mb-0.5">
-                            Batch {batch}
-                          </span>
-                          <div className="text-sm font-bold text-gray-900">
-                            {shortName}
-                          </div>
-                          <div className="text-xs text-gray-500 mt-0.5">
-                            {item.teacher} &middot; {item.room}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      ) : (
-        <div className="bg-white border-2 border-gray-800 rounded-xl p-10 text-center">
-          <p className="text-5xl mb-3">🎉</p>
-          <p className="text-gray-500 font-medium">No classes on {selectedDay}</p>
-          <p className="text-sm text-gray-400 mt-1">Enjoy your day off!</p>
-        </div>
-      )}
     </div>
   );
 }
 
-export default MobileSchedule;
+function TimetableGrid({
+  days,
+  periods,
+  today,
+  getFilteredItemsForPeriod,
+}) {
+  const dayColumns = useMemo(() => {
+    const map = {};
+    days.forEach((day) => {
+      map[day] = buildDayColumn(day, periods, getFilteredItemsForPeriod);
+    });
+    return map;
+  }, [days, periods, getFilteredItemsForPeriod]);
+
+  const totalCols = 2 + days.length * 2;
+
+  return (
+    <div className="w-full bg-white rounded-xl shadow-lg overflow-hidden border-2 border-gray-800">
+
+      {/* Header - College Info */}
+      <div className="p-3 md:p-4 border-b-2 border-gray-800 bg-gray-100">
+        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-1 md:gap-2">
+          <div>
+            <h2 className="text-base md:text-lg font-bold text-gray-900 tracking-tight">
+              CLASS TIME TABLE
+            </h2>
+            <p className="text-xs md:text-sm text-gray-700 mt-0.5">
+              <span className="font-semibold">Department:</span> Computer Engineering &nbsp;|&nbsp;
+              <span className="font-semibold">Class:</span> SY B.Tech (UG) &nbsp;|&nbsp;
+              <span className="font-semibold">Division:</span> SYCM3
+            </p>
+            <p className="text-xs md:text-sm text-gray-700">
+              <span className="font-semibold">w.e.f.</span> 25/08/2026 &nbsp;|&nbsp;
+              <span className="font-semibold">Class Teacher:</span> Ms. Preethi Paul
+            </p>
+          </div>
+          <div className="text-right text-xs md:text-sm text-gray-700">
+            <p><span className="font-semibold">Semester:</span> III &nbsp;|&nbsp; <span className="font-semibold">Academic Year:</span> 2026-27 (SH 2026)</p>
+            <p><span className="font-semibold">Version:</span> V1</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Timetable Table */}
+      <div className="w-full overflow-x-auto">
+        <table className="w-full min-w-[700px] md:min-w-full border-collapse text-xs md:text-sm table-fixed">
+          <thead>
+            <tr className="bg-gray-200 border-b-2 border-gray-800">
+              <th className="p-1.5 md:p-3 text-center font-bold text-gray-900 sticky left-0 bg-gray-200 z-10 w-[50px] md:w-[70px] border-r-2 border-gray-800">
+                Period
+              </th>
+              <th className="p-1.5 md:p-3 text-center font-bold text-gray-900 w-[80px] md:w-[110px] border-r-2 border-gray-800">
+                Time
+              </th>
+              {days.map((day) => (
+                <th key={day} colSpan={2} className={`
+                  p-1.5 md:p-3 text-center font-bold text-gray-900 min-w-[110px] md:min-w-[150px]
+                  ${day === today ? 'bg-gray-300' : ''}
+                  border-r-2 border-gray-800 last:border-r-0
+                `}>
+                  {day}
+                  {day === today && (
+                    <span className="block text-[6px] md:text-[8px] text-gray-700 font-normal">● Today</span>
+                  )}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {periods.map((period, rowIndex) => {
+              // BREAK band — a single full-width row, no per-day cells at all.
+              if (period.isBreak) {
+                return (
+                  <tr key={period.number} className="bg-gray-200 border-b-2 border-gray-800">
+                    <td className="p-1.5 md:p-3 text-center font-bold text-gray-900 border-r-2 border-gray-800 text-xs md:text-sm">
+                      {period.number}
+                    </td>
+                    <td className="p-1.5 md:p-3 text-center font-medium text-gray-800 border-r-2 border-gray-800 text-xs md:text-sm">
+                      {period.time}
+                    </td>
+                    <td colSpan={totalCols - 2} className="p-1.5 md:p-2 text-center font-bold tracking-widest text-gray-700 text-xs md:text-sm">
+                      BREAK
+                    </td>
+                  </tr>
+                );
+              }
+
+              const isCurrent = isCurrentPeriod(period.time);
+              const isPeriodActiveToday = isCurrent && days.includes(today);
+
+              return (
+                <tr key={period.number} className={`
+                  ${rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
+                  border-b border-gray-300
+                `}>
+                  {/* Period Number */}
+                  <td className={`
+                    p-1.5 md:p-3 text-center font-bold text-gray-900 sticky left-0
+                    ${isPeriodActiveToday ? 'bg-yellow-100' : (rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50')}
+                    z-10 border-r-2 border-gray-800
+                    text-xs md:text-sm
+                  `}>
+                    {period.number}
+                    {isPeriodActiveToday && (
+                      <span className="block text-[6px] md:text-[8px] text-green-700 font-bold">● LIVE</span>
+                    )}
+                  </td>
+
+                  {/* Time */}
+                  <td className={`
+                    p-1.5 md:p-3 text-center font-medium text-gray-800 border-r-2 border-gray-800 text-xs md:text-sm
+                    ${isPeriodActiveToday ? 'bg-yellow-50' : (rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50')}
+                  `}>
+                    {period.time}
+                  </td>
+
+                  {/* Days — every day ALWAYS contributes exactly 2 grid
+                      columns per row (via colSpan for unified cells, or
+                      two <td>s for split cells), so column position never
+                      drifts between days regardless of what any other
+                      day is doing that row. */}
+                  {days.map((day) => {
+                    const { grouped, unified, rowSpan, skip, rowSpanFor, skipSlot } = dayColumns[day];
+                    const isToday = day === today;
+
+                    const isSpanCurrent = (span) => {
+                      if (!isToday || rowIndex < 0 || rowIndex >= periods.length) return false;
+                      const start = periods[rowIndex].time.split('-')[0];
+                      const endIdx = Math.min(periods.length - 1, rowIndex + (span || 1) - 1);
+                      const end = periods[endIdx].time.split('-')[1];
+                      const now = new Date();
+                      const currentTime = now.toTimeString().slice(0, 5);
+                      return start <= currentTime && end >= currentTime;
+                    };
+
+                    if (unified[rowIndex]) {
+                      if (skip[rowIndex]) return null; // covered by a rowSpan above
+                      const span = rowSpan[rowIndex];
+                      const isLiveCell = isSpanCurrent(span);
+                      const cellBg = isLiveCell
+                        ? 'bg-yellow-100 font-medium'
+                        : isToday
+                        ? 'bg-gray-100'
+                        : rowIndex % 2 === 0
+                        ? 'bg-white'
+                        : 'bg-gray-50';
+
+                      const item = grouped[rowIndex].A; // representative (A === B content), or null
+                      return (
+                        <td
+                          key={`${day}-${period.number}`}
+                          colSpan={2}
+                          rowSpan={span}
+                          className={`
+                            p-1 md:p-1.5 align-middle text-center
+                            ${cellBg}
+                            border-r-2 border-gray-800 last:border-r-0
+                            text-[10px] md:text-sm
+                          `}
+                        >
+                          {item ? <SubjectBlock item={item} /> : <span className="text-gray-300">—</span>}
+                        </td>
+                      );
+                    }
+
+                    // Split A | B cell
+                    const g = grouped[rowIndex];
+                    const skipA = skipSlot[rowIndex].A;
+                    const skipB = skipSlot[rowIndex].B;
+                    const spanA = rowSpanFor[rowIndex].A;
+                    const spanB = rowSpanFor[rowIndex].B;
+                    const isLiveA = isSpanCurrent(spanA);
+                    const isLiveB = isSpanCurrent(spanB);
+
+                    const cellBgA = isLiveA
+                      ? 'bg-yellow-100 font-medium'
+                      : isToday
+                      ? 'bg-gray-100'
+                      : rowIndex % 2 === 0
+                      ? 'bg-white'
+                      : 'bg-gray-50';
+
+                    const cellBgB = isLiveB
+                      ? 'bg-yellow-100 font-medium'
+                      : isToday
+                      ? 'bg-gray-100'
+                      : rowIndex % 2 === 0
+                      ? 'bg-white'
+                      : 'bg-gray-50';
+
+                    return (
+                      <React.Fragment key={`${day}-${period.number}`}>
+                        {!skipA && (
+                          <td
+                            rowSpan={spanA}
+                            className={`
+                              p-1 md:p-1.5 align-middle
+                              ${cellBgA}
+                              border-r border-gray-300
+                              text-[10px] md:text-sm
+                            `}
+                          >
+                            {g.A ? (
+                              <div className="flex flex-col items-center justify-center text-center">
+                                <span className="text-[8px] md:text-[10px] font-bold text-gray-500 mb-0.5">A</span>
+                                <SubjectBlock item={g.A} />
+                              </div>
+                            ) : (
+                              <span className="text-gray-300">—</span>
+                            )}
+                          </td>
+                        )}
+                        {!skipB && (
+                          <td
+                            rowSpan={spanB}
+                            className={`
+                              p-1 md:p-1.5 align-middle
+                              ${cellBgB}
+                              border-r-2 border-gray-800 last:border-r-0
+                              text-[10px] md:text-sm
+                            `}
+                          >
+                            {g.B ? (
+                              <div className="flex flex-col items-center justify-center text-center">
+                                <span className="text-[8px] md:text-[10px] font-bold text-gray-500 mb-0.5">B</span>
+                                <SubjectBlock item={g.B} />
+                              </div>
+                            ) : (
+                              <span className="text-gray-300">—</span>
+                            )}
+                          </td>
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Footer - Subject & Faculty Legend */}
+      <div className="p-3 md:p-4 border-t-2 border-gray-800 bg-gray-100">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
+          <div>
+            <p className="text-[10px] md:text-xs font-bold text-gray-900 mb-0.5 md:mb-1">SUBJECT CODES:</p>
+            <div className="flex flex-wrap gap-x-2 md:gap-x-3 gap-y-0.5 md:gap-y-1 text-[9px] md:text-xs text-gray-800">
+              <span>OS - Operating System</span>
+              <span>MP - Microprocessor</span>
+              <span>FES - Foundation of Embedded System</span>
+              <span>ECN - Engineering Career Navigation</span>
+              <span>IKS: IPS - Indian Philosophical Systems</span>
+              <span>IKS: SCL - Sanskrit & Computational Linguistics</span>
+            </div>
+          </div>
+          <div>
+            <p className="text-[10px] md:text-xs font-bold text-gray-900 mb-0.5 md:mb-1">FACULTY CODES:</p>
+            <div className="flex flex-wrap gap-x-2 md:gap-x-3 gap-y-0.5 md:gap-y-1 text-[9px] md:text-xs text-gray-800">
+              <span>AD - Mr. Amol Dhumal</span>
+              <span>VM - Ms. Vaishnavi V. Mestry</span>
+              <span>AAK - Ms. Amruta Kulkarni</span>
+              <span>RD - Ms. Ranjana Deshmukh</span>
+              <span>VK - Ms. Vaishali Kosamkar</span>
+              <span>AN - Dr. Archana Nath</span>
+              <span>AB - Mr. Atul Bharate</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Signature Section 
+      <div className="p-3 md:p-4 border-t-2 border-gray-800 bg-gray-100 flex flex-wrap justify-between items-center text-xs md:text-sm text-gray-900">
+        <div className="flex flex-col items-center min-w-[60px] md:min-w-[80px]">
+          <div className="w-20 md:w-48 h-8 md:h-10 border-b-2 border-gray-800"></div>
+          <span className="mt-1 font-semibold text-[10px] md:text-sm">HOD</span>
+        </div>
+        <div className="flex flex-col items-center min-w-[60px] md:min-w-[80px]">
+          <div className="w-20 md:w-48 h-8 md:h-10 border-b-2 border-gray-800"></div>
+          <span className="mt-1 font-semibold text-[10px] md:text-sm">Dean Academics</span>
+        </div>
+        <div className="flex flex-col items-center min-w-[60px] md:min-w-[80px]">
+          <div className="w-20 md:w-48 h-8 md:h-10 border-b-2 border-gray-800"></div>
+          <span className="mt-1 font-semibold text-[10px] md:text-sm">Principal</span>
+        </div>
+      </div> */}
+    </div>
+  );
+}
+
+export default TimetableGrid;

@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { subjectData } from '../data/subjectData';
 
 function SubjectDetail() {
   const navigate = useNavigate();
   const [selectedSubjectId, setSelectedSubjectId] = useState(subjectData[0]?.id || 1);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const main = document.querySelector('main');
+    if (main) main.scrollTop = 0;
+  }, []);
 
   const selectedSubject = subjectData.find((s) => s.id === selectedSubjectId);
 
