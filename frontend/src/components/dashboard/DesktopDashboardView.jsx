@@ -15,7 +15,6 @@ function DesktopDashboardView({ greeting, today, announcements, loading, examDat
   return (
     <div className="space-y-6">
 
-      {/* Quick Links Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
@@ -25,10 +24,8 @@ function DesktopDashboardView({ greeting, today, announcements, loading, examDat
         <QuickLinks layout="rail" />
       </div>
 
-      {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
 
-        {/* Announcements Column */}
         <div className="lg:col-span-2">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -46,10 +43,8 @@ function DesktopDashboardView({ greeting, today, announcements, loading, examDat
           </div>
         </div>
 
-        {/* Sidebar - Reference Info */}
         <div className="space-y-5">
 
-          {/* Academics Hub Card */}
           <div className="bg-white border-2 border-gray-800 rounded-xl overflow-hidden shadow-sm">
             <div className="bg-gray-100 border-b-2 border-gray-800 px-4 py-2.5 flex items-center justify-between">
               <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
@@ -61,7 +56,6 @@ function DesktopDashboardView({ greeting, today, announcements, loading, examDat
             </div>
 
             <div className="p-3 space-y-2.5">
-              {/* Academic Calendar Button */}
               <Link
                 to="/academics/calendar"
                 className="group flex items-center justify-between p-3 rounded-lg border-2 border-gray-200 hover:border-gray-800 bg-white hover:bg-orange-50/60 transition-all duration-150 shadow-xs"
@@ -84,7 +78,6 @@ function DesktopDashboardView({ greeting, today, announcements, loading, examDat
                 </span>
               </Link>
 
-              {/* Subject Information Button */}
               <Link
                 to="/academics/subjects"
                 className="group flex items-center justify-between p-3 rounded-lg border-2 border-gray-200 hover:border-gray-800 bg-white hover:bg-blue-50/60 transition-all duration-150 shadow-xs"
@@ -109,7 +102,6 @@ function DesktopDashboardView({ greeting, today, announcements, loading, examDat
             </div>
           </div>
 
-          {/* Class Info Card */}
           <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
             <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
               👥 Class Details

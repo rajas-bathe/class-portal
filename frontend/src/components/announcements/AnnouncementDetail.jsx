@@ -32,10 +32,8 @@ function AnnouncementDetail({ item, onClose }) {
         </div>
 
         <div className="space-y-4">
-          {/* Title */}
           <h2 className="text-2xl font-bold text-gray-900">{item.title}</h2>
 
-          {/* Message + Category + Sender */}
           <p className="text-gray-700 whitespace-pre-wrap">
             {item.message}
           </p>
@@ -43,7 +41,6 @@ function AnnouncementDetail({ item, onClose }) {
             Category: {item.category} · Sender: {item.sender}
           </p>
 
-          {/* Image */}
           {item.imageUrl && (
             <div className="rounded-lg overflow-hidden border border-gray-200">
               <img
@@ -55,7 +52,6 @@ function AnnouncementDetail({ item, onClose }) {
             </div>
           )}
 
-          {/* Priority Badge */}
           {item.priority === 'High' && (
             <span className="inline-block text-xs font-medium bg-red-100 text-red-700 px-3 py-1 rounded-full">
               ⚡ High Priority

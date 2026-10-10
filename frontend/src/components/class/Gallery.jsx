@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import VideoEmbed from './VideoEmbed'; // ✅ same folder
+import VideoEmbed from './VideoEmbed';
 
 function Gallery() {
   const [images, setImages] = useState([]);
@@ -13,10 +13,8 @@ function Gallery() {
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
   
-  // ✅ loading state for image transitions
   const [isImageLoading, setIsImageLoading] = useState(false);
   
-  // ✅ Preload tracking
   const preloadedUrls = useRef(new Set());
 
   const fetchGalleryImages = async () => {
@@ -151,7 +149,7 @@ function Gallery() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedImage, currentIndex]);
 
-  // ✅ Preload adjacent images (2 before, 2 after)
+  // Preload adjacent images (2 before, 2 after)
   const preloadImages = (imageList) => {
     imageList.forEach((img) => {
       if (!img || img.mimeType?.startsWith('video/')) return;
@@ -204,7 +202,7 @@ function Gallery() {
     } else {
       url = `https://drive.google.com/uc?export=view&id=${img.id}`;
     }
-    // ✅ High quality, no resizing, WebP format (smaller & crisp)
+    // High quality, no resizing, WebP format (smaller & crisp)
     return `https://images.weserv.nl/?url=${encodeURIComponent(url)}&q=100&output=webp`;
   };
 
@@ -304,7 +302,6 @@ function Gallery() {
         </div>
       </div>
 
-      {/* Lightbox Modal */}
       {selectedImage && (
         <div
           className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4 sm:p-8"
@@ -314,7 +311,6 @@ function Gallery() {
             className="relative w-full max-w-6xl h-full max-h-[85vh] bg-[#141414] rounded-2xl overflow-hidden flex flex-col shadow-2xl border border-gray-800"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Top Bar */}
             <div className="absolute top-0 left-0 right-0 p-4 flex justify-between items-center z-30 bg-gradient-to-b from-black/80 to-transparent pointer-events-none">
               <div className="text-gray-300 bg-black/50 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium pointer-events-auto">
                 {currentIndex + 1} / {images.length}
@@ -336,7 +332,6 @@ function Gallery() {
               </div>
             </div>
 
-            {/* Previous / Next */}
             {images.length > 1 && (
               <button
                 onClick={goToPrevious}
@@ -354,7 +349,6 @@ function Gallery() {
               </button>
             )}
 
-            {/* Media */}
             <div
               className="flex-1 w-full h-full relative overflow-hidden flex items-center justify-center"
               onWheel={handleWheel}
@@ -367,7 +361,6 @@ function Gallery() {
                 />
               ) : (
                 <>
-                  {/* ✅ Loading overlay */}
                   {isImageLoading && (
                     <div className="absolute inset-0 flex flex-col items-center justify-center z-20 bg-black/60 backdrop-blur-sm">
                       <div className="w-10 h-10 border-4 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
@@ -396,7 +389,6 @@ function Gallery() {
               )}
             </div>
 
-            {/* Zoom Controls */}
             {!images[currentIndex]?.mimeType?.startsWith('video/') && (
               <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-black/70 backdrop-blur-md px-2 py-1.5 rounded-full z-30 border border-gray-700 shadow-lg">
                 <button

@@ -14,8 +14,7 @@ function Resources() {
   const driveFolderId = import.meta.env.VITE_DRIVE_FOLDER_ID;
   const galleryFolderId = import.meta.env.VITE_GALLERY_FOLDER_ID;
 
-  // Fetch Drive folders for the preview strip. If there are more than 4,
-
+  // Fetch Drive folders for the preview strip
   const { items, loading, error } = useDrive(driveFolderId, galleryFolderId);
   const allFolders = items.folders || [];
   const hasMoreFolders = allFolders.length > 4;
@@ -30,7 +29,6 @@ function Resources() {
         <p className="text-sm text-gray-500">Access study materials, templates, and important documents</p>
       </div>
 
-      {/* Google Drive Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <SectionHeader icon="📂" title="Google Drive" />

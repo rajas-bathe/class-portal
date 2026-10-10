@@ -134,10 +134,8 @@ function MobileSchedule({ days, periods, today, getFilteredItemsForPeriod }) {
 
   return (
     <div className="space-y-4">
-      {/* Day Selector — Smaller & without class count */}
       <div className="bg-white border-2 border-gray-800 rounded-xl p-3">
         <div className="flex items-center gap-2">
-          {/* Left Arrow */}
           <button
             onClick={goBack}
             className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-base font-bold bg-gray-100 text-gray-800 hover:bg-gray-200 active:scale-95 transition-all duration-200 touch-manipulation"
@@ -183,7 +181,6 @@ function MobileSchedule({ days, periods, today, getFilteredItemsForPeriod }) {
             })}
           </div>
 
-          {/* Right Arrow */}
           <button
             onClick={goForward}
             className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-base font-bold bg-gray-100 text-gray-800 hover:bg-gray-200 active:scale-95 transition-all duration-200 touch-manipulation"
@@ -194,10 +191,8 @@ function MobileSchedule({ days, periods, today, getFilteredItemsForPeriod }) {
         </div>
       </div>
 
-      {/* Schedule Card — All periods and break unified inside a single cohesive container */}
       {hasClasses ? (
         <div className="bg-white border-2 border-gray-800 rounded-xl overflow-hidden shadow-sm divide-y-2 divide-gray-800">
-          {/* Top Header Strip (Grey Rectangle) */}
           <div className="bg-gray-100 px-4 py-2.5 flex items-center justify-between">
             <span className="text-sm font-bold text-gray-900 flex items-center gap-2">
               📅 {selectedDay}&apos;s Schedule
@@ -214,7 +209,6 @@ function MobileSchedule({ days, periods, today, getFilteredItemsForPeriod }) {
             )}
           </div>
 
-          {/* Schedule Blocks */}
           {dayBlocks.map((block) => {
             if (block.isBreak) {
               return (
@@ -245,7 +239,6 @@ function MobileSchedule({ days, periods, today, getFilteredItemsForPeriod }) {
                   ${isLive ? 'bg-yellow-50/70 border-l-4 border-l-green-500' : 'bg-white'}
                 `}
               >
-                {/* Block Header */}
                 <div className={`
                   flex items-center justify-between px-4 py-2
                   ${isLive ? 'bg-yellow-100/70 border-b border-yellow-200' : 'bg-gray-50 border-b border-gray-200'}
@@ -263,7 +256,6 @@ function MobileSchedule({ days, periods, today, getFilteredItemsForPeriod }) {
                   </div>
                 </div>
 
-                {/* Class Items */}
                 {isUnified ? (
                   <div className="p-3.5 flex flex-col items-center text-center">
                     <span className="text-[10px] font-bold text-transparent mb-0.5 select-none" aria-hidden="true">A</span>

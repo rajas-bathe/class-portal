@@ -6,7 +6,6 @@ function InfoCards() {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      {/* Academic Calendar Card — Opens Modal (kept as before) */}
       <button
         onClick={() => navigate('/academics/calendar')}
         className="bg-white border-2 border-gray-800 rounded-xl p-6 text-left hover:shadow-lg transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"
@@ -23,7 +22,6 @@ function InfoCards() {
         </div>
       </button>
 
-      {/* Subject Info Card — Navigates to detailed page */}
       <button
         onClick={() => navigate('/academics/subjects')}
         className="bg-white border-2 border-gray-800 rounded-xl p-6 text-left hover:shadow-lg transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]"

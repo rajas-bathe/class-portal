@@ -105,7 +105,6 @@ function DriveFileView() {
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-gray-50">
-      {/* Header with Back, File name, Navigation */}
       <div className="flex items-center gap-3 p-3 bg-white border-b border-gray-200 shadow-sm flex-shrink-0 flex-wrap">
         <button
           onClick={goBack}
@@ -139,13 +138,10 @@ function DriveFileView() {
         )}
       </div>
 
-{/* Viewer – full height, no scroll on page */}
-      {/* Reverted to permanently use bg-[#323232] to match the unchangeable iframe */}
+      {/* Matches the unchangeable Google Drive iframe background */}
       <div className="flex-1 overflow-hidden relative bg-[#323232] pt-6" style={{ overscrollBehavior: 'contain' }}>
         
-        {/* 
-          VISUAL OVERLAY: Reverted to permanently use bg-[#1f1f1f] 
-        */}
+        {/* Visual overlay covering Google Drive pop-out icon */}
         <div 
           className="absolute top-6 right-0 w-14 h-14 bg-[#1f1f1f] z-10 cursor-default"
           aria-hidden="true"

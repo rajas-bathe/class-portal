@@ -7,13 +7,11 @@ function ExamTimetable() {
 
   return (
     <div className="space-y-4">
-      {/* Section Title */}
       <div className="border-b-2 border-gray-800 pb-1 flex items-center justify-between">
         <h2 className="text-lg font-bold text-gray-900">📋 Exams & Timetable</h2>
         <span className="text-xs font-semibold text-gray-500">Semester III</span>
       </div>
 
-      {/* Three Big Buttons: MSE | ESE | ESPE */}
       <div className="grid grid-cols-3 gap-2.5">
         {examTypes.map((type) => {
           const label = type.toUpperCase();
@@ -39,13 +37,10 @@ function ExamTimetable() {
         })}
       </div>
 
-      {/* Exam Schedule Card */}
       {currentData && (
         <>
           {currentData.isLocked ? (
-            /* Locked and Blurred Card */
             <div className="bg-white border-2 border-gray-800 rounded-xl overflow-hidden shadow-sm">
-              {/* Header */}
               <div className="bg-gray-100 border-b-2 border-gray-800 px-4 py-2.5 flex items-center justify-between gap-2">
                 <span className="text-sm font-bold text-gray-800 leading-snug">{currentData.name}</span>
                 <span className="text-xs font-bold text-gray-700 bg-white border border-gray-300 px-2.5 py-0.5 rounded-full flex items-center gap-1 shrink-0">
@@ -55,7 +50,6 @@ function ExamTimetable() {
 
               {/* Locked Body Container (below header, impossible to overlap) */}
               <div className="relative p-6 sm:p-8 flex flex-col items-center justify-center min-h-[220px] overflow-hidden">
-                {/* Blurred Placeholder / Skeleton */}
                 <div className="absolute inset-0 p-5 filter blur-[5px] opacity-25 select-none pointer-events-none space-y-3 flex flex-col justify-center">
                   <div className="h-8 bg-gray-300 rounded-lg w-full"></div>
                   <div className="h-8 bg-gray-200 rounded-lg w-full"></div>
@@ -63,10 +57,8 @@ function ExamTimetable() {
                   <div className="h-8 bg-gray-200 rounded-lg w-full"></div>
                 </div>
 
-                {/* Light blur overlay inside body */}
                 <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px]"></div>
 
-                {/* Centered Lock & Announcement Content */}
                 <div className="relative z-10 flex flex-col items-center justify-center text-center max-w-sm px-2">
                   <div className="w-12 h-12 rounded-2xl bg-yellow-300 border-2 border-gray-800 flex items-center justify-center text-xl shadow-xs mb-2.5">
                     🔒
@@ -84,7 +76,6 @@ function ExamTimetable() {
               </div>
             </div>
           ) : (
-            /* Active Midsem Timetable Table */
             <div className="bg-white border-2 border-gray-800 rounded-xl overflow-hidden shadow-sm">
               <div className="bg-gray-100 border-b-2 border-gray-800 px-4 py-2.5 flex items-center justify-between flex-wrap gap-2">
                 <span className="text-sm font-bold text-gray-800">

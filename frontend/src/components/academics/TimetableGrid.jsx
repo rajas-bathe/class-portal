@@ -146,7 +146,6 @@ function TimetableGrid({
   return (
     <div className="w-full bg-white rounded-xl shadow-lg overflow-hidden border-2 border-gray-800">
 
-      {/* Header - College Info */}
       <div className="p-3 md:p-4 border-b-2 border-gray-800 bg-gray-100">
         <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-1 md:gap-2">
           <div>
@@ -170,7 +169,6 @@ function TimetableGrid({
         </div>
       </div>
 
-      {/* Timetable Table */}
       <div className="w-full overflow-x-auto">
         <table className="w-full min-w-[700px] md:min-w-full border-collapse text-xs md:text-sm table-fixed">
           <thead>
@@ -222,7 +220,6 @@ function TimetableGrid({
                   ${rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
                   border-b border-gray-300
                 `}>
-                  {/* Period Number */}
                   <td className={`
                     p-1.5 md:p-3 text-center font-bold text-gray-900 sticky left-0
                     ${isPeriodActiveToday ? 'bg-yellow-100' : (rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50')}
@@ -235,7 +232,6 @@ function TimetableGrid({
                     )}
                   </td>
 
-                  {/* Time */}
                   <td className={`
                     p-1.5 md:p-3 text-center font-medium text-gray-800 border-r-2 border-gray-800 text-xs md:text-sm
                     ${isPeriodActiveToday ? 'bg-yellow-50' : (rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50')}
@@ -369,7 +365,6 @@ function TimetableGrid({
         </table>
       </div>
 
-      {/* Footer - Subject & Faculty Legend */}
       <div className="p-3 md:p-4 border-t-2 border-gray-800 bg-gray-100">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-3">
           <div>

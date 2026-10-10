@@ -16,7 +16,6 @@ function SideBar() {
 
   return (
     <>
-      {/* Overlay */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
@@ -24,7 +23,6 @@ function SideBar() {
         />
       )}
 
-      {/* Sidebar — Clean white, black borders, minimal */}
       <aside className={`
         fixed top-0 left-0 h-full w-64 bg-white border-r-2 border-gray-800 z-50
         transform transition-transform duration-300 ease-in-out
@@ -32,7 +30,6 @@ function SideBar() {
         lg:translate-x-0 lg:relative lg:shadow-lg
       `}>
 
-        {/* Logo — Minimal black & white */}
         <div className="hidden lg:block p-5 border-b-2 border-gray-800">
           <Link to="/" className="flex items-center gap-3">
             <img
@@ -46,7 +43,6 @@ function SideBar() {
           </Link>
         </div>
 
-        {/* Close button - mobile only */}
         <div className="p-4 border-b-2 border-gray-800 flex justify-between items-center lg:hidden">
           <h2 className="font-bold text-gray-900">Menu</h2>
           <button
@@ -57,7 +53,6 @@ function SideBar() {
           </button>
         </div>
 
-        {/* Navigation — Clean, minimal */}
         <nav className="p-3">
           <ul className="space-y-1">
             {navItems.map((item) => (
@@ -75,7 +70,6 @@ function SideBar() {
           </ul>
         </nav>
 
-        {/* Bottom — Optional user info / version */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t-2 border-gray-800">
           <p className="text-[10px] text-gray-400 text-center">v1.0 · SY B.Tech (UG)</p>
         </div>

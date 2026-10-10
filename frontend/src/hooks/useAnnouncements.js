@@ -16,7 +16,7 @@ export function useAnnouncementsAirtable() {
           throw new Error('Airtable credentials missing in .env');
         }
 
-        // ✅ Sort by createdTime (newest first)
+        // Sort by createdTime (newest first)
         const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_NAME}?sort%5B0%5D%5Bfield%5D=createdTime&sort%5B0%5D%5Bdirection%5D=desc`;
 
         const response = await fetch(url, {

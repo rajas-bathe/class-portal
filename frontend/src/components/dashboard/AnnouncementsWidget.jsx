@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import AnnouncementImageModal from '../announcements/AnnouncementImageModal';
 
 const CATEGORY_STYLES = {
   news: 'bg-blue-100 text-blue-700 border-blue-200',
@@ -27,7 +28,7 @@ function FileIcon() {
   );
 }
 
-function AnnouncementRow({ item, thumbSize }) {
+function AnnouncementRow({ item, thumbSize, onImageClick }) {
   const category = (item.category || 'general').toLowerCase();
   const badgeClass = CATEGORY_STYLES[category] || CATEGORY_STYLES.general;
   const image = item.imageUrl || item.image;
@@ -38,10 +39,26 @@ function AnnouncementRow({ item, thumbSize }) {
   return (
     <Link
       to="/announcements"
-      className="flex gap-3 bg-white border-2 border-gray-200 rounded-xl p-3.5 hover:border-blue-300 hover:shadow-md hover:scale-[1.02] active:scale-95 transition-all duration-200"
+      className="flex gap-3 bg-white border-2 border-gray-200 rounded-xl p-3.5 hover:border-blue-300 hover:shadow-md hover:scale-[1.02] active:scale-95 transition-all duration-200 group"
     >
       <div
-        className={`${thumbSize} flex-shrink-0 rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden text-gray-400`}
+        onClick={(e) => {
+          if (image && onImageClick) {
+            e.preventDefault();
+            e.stopPropagation();
+            onImageClick({
+              imageUrl: image,
+              title: item.title,
+              category: item.category,
+              sender: author,
+              timeAgo: timeAgo(createdAt),
+            });
+          }
+        }}
+        className={`${thumbSize} ${
+          image ? 'cursor-pointer hover:ring-2 hover:ring-gray-800 active:scale-95' : ''
+        } flex-shrink-0 rounded-lg bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center overflow-hidden text-gray-400 transition-all`}
+        title={image ? 'Click to preview image' : undefined}
       >
         {image ? (
           <img
@@ -92,6 +109,7 @@ function AnnouncementSkeleton({ thumbSize }) {
 }
 
 function AnnouncementsWidget({ announcements = [], loading = false, variant = 'compact', limit = 3 }) {
+  const [previewImage, setPreviewImage] = useState(null);
   const items = announcements.slice(0, limit);
   const thumbSize = variant === 'full' ? 'w-[88px] h-[68px]' : 'w-[52px] h-[52px]';
 
@@ -115,10 +133,21 @@ function AnnouncementsWidget({ announcements = [], loading = false, variant = 'c
       ) : (
         <div className="flex flex-col gap-3">
           {items.map((item) => (
-            <AnnouncementRow key={item.id} item={item} thumbSize={thumbSize} />
+            <AnnouncementRow
+              key={item.id}
+              item={item}
+              thumbSize={thumbSize}
+              onImageClick={setPreviewImage}
+            />
           ))}
         </div>
       )}
+
+      <AnnouncementImageModal
+        isOpen={Boolean(previewImage)}
+        onClose={() => setPreviewImage(null)}
+        image={previewImage}
+      />
     </div>
   );
 }

@@ -17,7 +17,6 @@ function MobileNavbar() {
   return (
     <div className="lg:hidden bg-white border-b-2 border-gray-800">
       <header className="flex justify-between items-center px-4 py-2.5">
-        {/* Hamburger Menu with proper breathing room from left */}
         <button
           onClick={openSidebar}
           className="w-10 h-10 flex items-center justify-center rounded-xl border-2 border-gray-800 bg-white hover:bg-gray-100 active:scale-95 transition-all text-gray-800 shadow-xs"
@@ -38,12 +37,10 @@ function MobileNavbar() {
           </svg>
         </button>
 
-        {/* Brand Title */}
         <h1 className="text-lg font-bold text-gray-900 tracking-tight">
           Class Post
         </h1>
 
-        {/* Date and Day stacked vertically */}
         <div className="text-right leading-tight select-none">
           <div className="text-xs font-extrabold text-gray-900">
             {formattedDate}

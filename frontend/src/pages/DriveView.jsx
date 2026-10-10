@@ -48,7 +48,6 @@ function DriveView() {
     navigate(`/resources/drive/${subFolderId}`, { state: { folderPath: newPath } });
   };
 
-  // ✅ Pass folderPath when navigating to a file
   const handleFileClick = (fileId) => {
     navigate(`/resources/drive/file/${fileId}`, {
       state: { fromFolderId: rootFolderId, folderPath: folderPath }
@@ -57,10 +56,8 @@ function DriveView() {
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
-      {/* Navigation Bar */}
       <div className="bg-white border-2 border-gray-800 rounded-xl p-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          {/* Breadcrumb Navigation */}
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-sm font-medium text-gray-500 mr-1">📂</span>
             {folderPath.map((folder, index) => (
@@ -81,7 +78,6 @@ function DriveView() {
             ))}
           </div>
 
-          {/* Action Buttons */}
           <div className="flex items-center gap-2 flex-shrink-0">
             <button
               onClick={goUp}
@@ -98,7 +94,6 @@ function DriveView() {
           </div>
         </div>
 
-        {/* Current folder indicator */}
         <div className="mt-3 pt-3 border-t border-gray-200 flex items-center gap-2 text-xs text-gray-500">
           <span>📍</span>
           <span>
@@ -109,7 +104,6 @@ function DriveView() {
         </div>
       </div>
 
-      {/* Drive Browser */}
       <DriveBrowser
         folderId={rootFolderId}
         excludeFolderId={galleryFolderId}

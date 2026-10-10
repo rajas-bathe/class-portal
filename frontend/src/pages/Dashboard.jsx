@@ -29,7 +29,6 @@ function Dashboard() {
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
 
-      {/* Mobile — shown below lg breakpoint */}
       <div className="lg:hidden">
         <MobileDashboardView
           greeting={greeting}
@@ -40,7 +39,6 @@ function Dashboard() {
         />
       </div>
 
-      {/* Desktop — shown at lg breakpoint and up */}
       <div className="hidden lg:block">
         <DesktopDashboardView
           greeting={greeting}

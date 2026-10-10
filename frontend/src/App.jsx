@@ -1,4 +1,3 @@
-// Importing Pages
 import Dashboard from "./pages/Dashboard";
 import Academics from "./pages/Academics"; 
 import Resources from "./pages/Resources";
@@ -10,14 +9,11 @@ import AcademicCalendarView from "./pages/AcademicCalendarView";
 import DriveFileView from "./pages/DriveFileView";
 import About from "./pages/About";
 
-// Importing Components
 import SideBar from "./components/layout/SideBar";
 import MobileNavbar from "./components/layout/MobileNavbar";
 
-// Sidebar
 import { SidebarProvider } from "./context/SidebarContext";
 
-// Importing BrowserRouter
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 
@@ -38,7 +34,6 @@ function App() {
               <Route path="/resources" element={<Resources />} />
               <Route path="/about" element={<About />} />
               
-              {/*  */}
               <Route path="/resources/drive" element={<DriveView />} />
               <Route path="/resources/drive/file/:fileId" element={<DriveFileView />} />
               <Route path="/resources/drive/:folderId" element={<DriveView />} />

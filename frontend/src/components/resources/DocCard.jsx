@@ -9,7 +9,6 @@ function DocCard({ icon, title, description, fileUrl, size, type = 'template' })
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Card Top — Icon + Type Badge */}
       <div className="p-4 pb-2 flex items-start justify-between">
         <span className="text-4xl">{icon}</span>
         <span className={`text-[10px] px-2 py-0.5 rounded-full ${type === 'template' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
@@ -17,14 +16,12 @@ function DocCard({ icon, title, description, fileUrl, size, type = 'template' })
         </span>
       </div>
 
-      {/* Card Body — Title + Description + Size */}
       <div className="px-4 pb-2">
         <h4 className="text-sm font-bold text-gray-900 leading-tight">{title}</h4>
         <p className="text-xs text-gray-500 mt-1 line-clamp-2">{description}</p>
         <p className="text-[10px] text-gray-400 mt-1">{size}</p>
       </div>
 
-      {/* Card Footer — Download (appears on hover) */}
       <div className={`px-4 pb-4 transition-all duration-200 ${isHovered ? 'opacity-100' : 'opacity-0'}`}>
         <a
           href={fileUrl}

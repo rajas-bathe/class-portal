@@ -49,7 +49,6 @@ function MobileDashboardView({ greeting, today, announcements, loading, classInf
         </div> 
       </div> */}
 
-      {/* Quick Links */}
       <div className="space-y-3">
         <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
           🚀 Quick Access
@@ -57,7 +56,6 @@ function MobileDashboardView({ greeting, today, announcements, loading, classInf
         <QuickLinks layout="grid" />
       </div>
 
-      {/* Announcements */}
       <div className="space-y-3">
         <div className="flex justify-between items-center">
           <h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
@@ -73,7 +71,6 @@ function MobileDashboardView({ greeting, today, announcements, loading, classInf
         <AnnouncementsWidget announcements={announcements} loading={loading} variant="compact" limit={3} />
       </div>
 
-      {/* Class Details */}
       {classInfo && (
         <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-4 shadow-sm">
           <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">

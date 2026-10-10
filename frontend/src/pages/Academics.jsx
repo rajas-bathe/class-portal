@@ -20,8 +20,6 @@ function Academics() {
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
-      
-      {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
          <div>
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight leading-tight">
@@ -36,7 +34,6 @@ function Academics() {
         </div>
       </div>
 
-      {/* Mobile Schedule */}
       <div className="lg:hidden">
         <MobileSchedule 
           days={days}
@@ -46,7 +43,6 @@ function Academics() {
         />
       </div>
 
-      {/* Desktop Timetable */}
       <div className="hidden lg:block">
         <TimetableGrid 
           days={days}
@@ -56,10 +52,8 @@ function Academics() {
         />
       </div>
 
-      {/* Exam Timetable */}
       <ExamTimetable />
 
-      {/* Clickable Info Cards */}
       <InfoCards />
 
     </div>

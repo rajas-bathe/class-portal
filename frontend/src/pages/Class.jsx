@@ -6,13 +6,11 @@ function Class() {
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
       
-      {/* Page Header */}
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">👥 Class Hub</h1>
         <p className="text-sm text-gray-500">Class information and photo gallery</p>
       </div>
 
-      {/* Class Information Card */}
       <div className="bg-white border-2 border-gray-800 rounded-xl overflow-hidden">
         <div className="bg-gray-100 border-b-2 border-gray-800 px-4 py-2.5">
           <span className="text-sm font-bold text-gray-800">📋 Class Information</span>
@@ -45,7 +43,6 @@ function Class() {
         </div>
       </div>
 
-      {/* Gallery Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-gray-900 border-b-2 border-gray-800 pb-1">📸 Class Gallery</h2>

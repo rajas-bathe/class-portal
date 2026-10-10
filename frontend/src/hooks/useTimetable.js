@@ -35,7 +35,7 @@ export function useTimetable() {
     const dayData = timetableData[today];
     if (!dayData) return null;
     
-    // ✅ No viewMode filter here – always show the next class
+    // No viewMode filter here – always show the next class
     const allItems = dayData.classes;
     
     const upcoming = allItems

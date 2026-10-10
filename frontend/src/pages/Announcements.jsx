@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useAnnouncementsAirtable } from '../hooks/useAnnouncementsAirtable';
 import AnnouncementItem from '../components/announcements/AnnouncementItem';
+import AnnouncementImageModal from '../components/announcements/AnnouncementImageModal';
 
 function Announcements() {
   const { items, loading, error } = useAnnouncementsAirtable();
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const categories = ['All', 'Hackathon', 'Club', 'Sports', 'Exam', 'General'];
 
@@ -41,13 +43,11 @@ function Announcements() {
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
-      {/* Header */}
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">📢 Announcements</h1>
         <p className="text-sm text-gray-500">Stay updated with the latest from clubs & committees</p>
       </div>
 
-      {/* Category Filter Buttons */}
       <div className="flex flex-wrap gap-2">
         {categories.map((cat) => (
           <button
@@ -64,15 +64,23 @@ function Announcements() {
         ))}
       </div>
 
-      {/* Count */}
       <p className="text-sm font-medium text-gray-500">{filteredItems.length} announcements</p>
 
-      {/* Announcement List */}
       <div className="space-y-3">
         {filteredItems.map((item) => (
-          <AnnouncementItem key={item.id} item={item} />
+          <AnnouncementItem
+            key={item.id}
+            item={item}
+            onImageClick={setSelectedImage}
+          />
         ))}
       </div>
+
+      <AnnouncementImageModal
+        isOpen={Boolean(selectedImage)}
+        onClose={() => setSelectedImage(null)}
+        image={selectedImage}
+      />
     </div>
   );
 }

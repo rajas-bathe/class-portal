@@ -57,9 +57,7 @@ function MiniCalendar({ year, month, dateMap }) {
 
   return (
     <div className="w-full select-none">
-      {/* Calendar Grid Table */}
       <div className="border-2 border-gray-800 rounded-lg overflow-hidden bg-white">
-        {/* Day Header Row */}
         <div className="grid grid-cols-7 bg-gray-100 border-b-2 border-gray-800 text-center">
           {DAY_HEADERS.map((day, i) => (
             <div
@@ -77,7 +75,6 @@ function MiniCalendar({ year, month, dateMap }) {
           ))}
         </div>
 
-        {/* Days Grid */}
         <div className="grid grid-cols-7 divide-x divide-y divide-gray-200">
           {cells.map((day, idx) => {
             const colIdx = idx % 7;
@@ -130,7 +127,7 @@ function MiniCalendar({ year, month, dateMap }) {
   );
 }
 
-// ─── EventRow (High Contrast, Clear Boundaries) ──────────────────────────────
+// ─── EventRow ─────────────────────────────────────────────────────────────────
 function EventRow({ event }) {
   const cfg = CATEGORY_CONFIG[event.category] ?? CATEGORY_CONFIG.important;
   const dateLabel = event.endDate
@@ -177,7 +174,6 @@ function MonthSection({ data }) {
 
   return (
     <div className="bg-white border-2 border-gray-800 rounded-xl overflow-hidden shadow-sm">
-      {/* Yellow Top Banner */}
       <div className="bg-yellow-300 border-b-2 border-gray-800 px-4 py-2.5 flex items-center justify-between">
         <h3 className="text-base font-extrabold text-gray-900 tracking-wider">
           {monthLabel}
@@ -187,9 +183,7 @@ function MonthSection({ data }) {
         </span>
       </div>
 
-      {/* Two Column Layout: Left Calendar Grid | Right Event List */}
       <div className="flex flex-col md:flex-row">
-        {/* Left: Mini Calendar with solid right border */}
         <div className="p-4 md:w-80 md:flex-shrink-0 md:border-r-2 md:border-gray-800 bg-gray-50/50 flex flex-col justify-start">
           <div className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
             <span>🗓️</span> Month Overview
@@ -197,7 +191,6 @@ function MonthSection({ data }) {
           <MiniCalendar year={year} month={month} dateMap={dateMap} />
         </div>
 
-        {/* Right: Events List with clean spacing */}
         <div className="flex-1 p-4 md:p-5 border-t-2 md:border-t-0 border-gray-800 space-y-3 bg-white">
           <div className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-1 flex items-center gap-1.5">
             <span>📌</span> Scheduled Events & Notices
@@ -215,7 +208,6 @@ function MonthSection({ data }) {
             </div>
           )}
 
-          {/* Footnotes / Important Notes */}
           {notes?.length > 0 && (
             <div className="pt-2 space-y-2">
               {notes.map((note, i) => (
@@ -235,7 +227,7 @@ function MonthSection({ data }) {
   );
 }
 
-// ─── Legend Component (Grounded Brutalist Card) ───────────────────────────────
+// ─── Legend Component ─────────────────────────────────────────────────────────
 function Legend() {
   return (
     <div className="bg-white border-2 border-gray-800 rounded-xl p-3.5 shadow-xs">
@@ -314,7 +306,6 @@ function AcademicCalendarView() {
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
-      {/* Back Button */}
       <div>
         <button
           onClick={() => navigate(-1)}
@@ -325,7 +316,6 @@ function AcademicCalendarView() {
         </button>
       </div>
 
-      {/* Page Header (Clean, Subtitle Removed) */}
       <div>
         <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">
           📅 {title}
@@ -335,17 +325,14 @@ function AcademicCalendarView() {
         </p>
       </div>
 
-      {/* Category Legend */}
       <Legend />
 
-      {/* Month Cards */}
       <div className="space-y-6">
         {months.map((monthData, i) => (
           <MonthSection key={i} data={monthData} />
         ))}
       </div>
 
-      {/* Term Schedule Table */}
       <TermSchedule data={termSchedule} />
     </div>
   );

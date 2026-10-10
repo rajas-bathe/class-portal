@@ -34,8 +34,8 @@ const ICONS = {
 const LINKS = [
   { path: '/academics', label: 'Timetable', icon: 'table', emoji: '📅' },
   { path: '/resources', label: 'Drive', icon: 'drive', emoji: '📁' },
-  { path: '/class', label: 'Gallery', icon: 'photo', emoji: '🖼️' },
   { path: '/about', label: 'About', icon: 'about', emoji: '⚙️' },
+  { path: '/class', label: 'Gallery', icon: 'photo', emoji: '🖼️' },
 ];
 
 function QuickLinks({ layout = 'grid' }) {

@@ -16,7 +16,6 @@ function SubjectDetail() {
 
   return (
     <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
-      {/* Back Button */}
       <div>
         <button
           onClick={() => navigate(-1)}
@@ -27,7 +26,6 @@ function SubjectDetail() {
         </button>
       </div>
 
-      {/* Page Header */}
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">
           📋 Subject Syllabus
@@ -37,7 +35,6 @@ function SubjectDetail() {
         </p>
       </div>
 
-      {/* Subject Buttons Selector — 2x2 Grid on Mobile, Flex on Desktop */}
       <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-2.5">
         {subjectData.map((subject) => {
           const isSelected = selectedSubjectId === subject.id;
@@ -63,10 +60,8 @@ function SubjectDetail() {
         })}
       </div>
 
-      {/* Subject Module & Syllabus Card */}
       {selectedSubject && (
         <div className="bg-white border-2 border-gray-800 rounded-xl overflow-hidden shadow-sm">
-          {/* Header */}
           <div className="bg-yellow-300 border-b-2 border-gray-800 px-5 py-3 flex items-center justify-between flex-wrap gap-2">
             <div>
               <span className="text-xs font-mono font-bold text-gray-800 bg-white/80 border border-gray-800/30 px-2 py-0.5 rounded">
@@ -81,14 +76,12 @@ function SubjectDetail() {
             </span>
           </div>
 
-          {/* Modules List with Sub-topics */}
           <div className="p-4 md:p-6 space-y-4">
             {selectedSubject.syllabus.map((mod) => (
               <div
                 key={mod.module}
                 className="border-2 border-gray-800 rounded-xl overflow-hidden shadow-xs"
               >
-                {/* Module Bar */}
                 <div className="bg-gray-100 border-b-2 border-gray-800 px-4 py-2.5 flex items-center justify-between flex-wrap gap-2">
                   <div className="flex items-center gap-2.5">
                     <span className="text-xs font-bold bg-gray-800 text-white px-2.5 py-0.5 rounded">
@@ -103,7 +96,6 @@ function SubjectDetail() {
                   </span>
                 </div>
 
-                {/* Sub-topics */}
                 <div className="p-4 bg-white">
                   <ul className="space-y-2">
                     {mod.subtopics.map((sub, sIdx) => (

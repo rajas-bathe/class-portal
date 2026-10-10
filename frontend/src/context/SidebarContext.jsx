@@ -6,12 +6,12 @@ export function SidebarProvider({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const openSidebar = () => {
-    console.log('Opening sidebar'); // Debug log
+    console.log('Opening sidebar');
     setIsSidebarOpen(true);
   };
   
   const closeSidebar = () => {
-    console.log('Closing sidebar'); // Debug log
+    console.log('Closing sidebar');
     setIsSidebarOpen(false);
   };
 
