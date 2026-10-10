@@ -19,6 +19,7 @@ import { SidebarProvider } from "./context/SidebarContext";
 
 // Importing BrowserRouter
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 
 function App() {
   return (
@@ -49,6 +50,7 @@ function App() {
           </main>
         </div>
       </div>
+      <Analytics />
     </SidebarProvider>
   );
 }
