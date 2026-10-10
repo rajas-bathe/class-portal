@@ -45,8 +45,6 @@ const techGroups = [
     items: [
       'Airtable API',
       'Google Drive API',
-      'Imgur API',
-      'JSONBin',
       'Vercel Analytics',
     ],
   },
