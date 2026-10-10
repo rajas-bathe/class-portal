@@ -35,9 +35,11 @@ function SideBar() {
         {/* Logo — Minimal black & white */}
         <div className="hidden lg:block p-5 border-b-2 border-gray-800">
           <Link to="/" className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-gray-800 rounded-lg flex items-center justify-center">
-              <span className="text-white text-sm font-bold">CP</span>
-            </div>
+            <img
+              src="/classpost-logo.svg"
+              alt="Class Post"
+              className="w-9 h-9 object-contain"
+            />
             <div>
               <h1 className="text-lg font-bold text-gray-900 tracking-tight">Class Post</h1>
             </div>
