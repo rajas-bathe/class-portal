@@ -22,12 +22,12 @@ function Dashboard() {
 
   const classInfo = [
     { label: 'Division', value: 'SYCM3' },
-    { label: 'Class teacher', value: 'Ms. Preethi Paul' },
-    { label: 'Students', value: '60' },
+    { label: 'Branch', value: 'Computer Engineering' },
+    { label: 'Students', value: '70' },
   ];
 
   return (
-    <div className="p-4 lg:p-6 max-w-6xl mx-auto">
+    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
 
       {/* Mobile — shown below lg breakpoint */}
       <div className="lg:hidden">
@@ -36,6 +36,7 @@ function Dashboard() {
           today={today}
           announcements={announcements}
           loading={announcementsLoading}
+          classInfo={classInfo}
         />
       </div>
 

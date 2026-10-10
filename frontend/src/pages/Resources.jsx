@@ -23,7 +23,7 @@ function Resources() {
   const remainingCount = allFolders.length - previewFolders.length;
 
   return (
-    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-8">
+    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
 
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">📁 Resources</h1>

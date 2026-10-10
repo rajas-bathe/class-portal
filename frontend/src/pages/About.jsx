@@ -93,7 +93,7 @@ function SectionHeading({ id, icon, children }) {
 
 function About() {
   return (
-    <div className="w-full max-w-6xl mx-auto p-4 md:p-6 space-y-7 text-gray-900">
+    <div className="w-full max-w-7xl mx-auto p-4 md:p-6 space-y-6 text-gray-900">
       <header>
         <h1 className="flex items-center gap-3 text-2xl md:text-3xl font-bold tracking-tight">
           <span aria-hidden="true">⚙️</span>
@@ -236,11 +236,8 @@ function About() {
           <div className={`${card} overflow-hidden`}>
             <div className="border-b border-gray-200 bg-gray-50 px-5 py-3">
               <h3 className="text-sm font-bold">
-                🙌 A little help goes a long way
+                Contributors
               </h3>
-              <p className="mt-1 text-xs text-gray-500">
-                Thanks for testing things and helping them work better.
-              </p>
             </div>
 
             <div className="divide-y divide-gray-200">

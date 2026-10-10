@@ -13,7 +13,7 @@ function DesktopDashboardView({ greeting, today, announcements, loading, examDat
   });
 
   return (
-    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-8">
+    <div className="space-y-6">
 
       {/* Quick Links Section */}
       <div className="space-y-4">

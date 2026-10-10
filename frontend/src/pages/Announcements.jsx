@@ -14,7 +14,7 @@ function Announcements() {
 
   if (loading) {
     return (
-      <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-4">
+      <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-4">
         {[1, 2, 3].map((i) => (
           <div key={i} className="bg-gray-200 rounded-xl h-24 animate-pulse"></div>
         ))}
@@ -24,7 +24,7 @@ function Announcements() {
 
   if (error) {
     return (
-      <div className="p-4 md:p-6 max-w-3xl mx-auto">
+      <div className="p-4 md:p-6 max-w-7xl mx-auto">
         <div className="bg-red-50 border-2 border-red-300 rounded-xl p-4 text-center">
           <p className="text-red-600 font-medium">⚠️ Failed to load announcements</p>
           <p className="text-sm text-red-500">{error}</p>
@@ -40,7 +40,7 @@ function Announcements() {
   }
 
   return (
-    <div className="p-4 md:p-6 max-w-4xl mx-auto space-y-4">
+    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">📢 Announcements</h1>

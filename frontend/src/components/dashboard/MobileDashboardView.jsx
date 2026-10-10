@@ -11,7 +11,7 @@ function MoonIcon() {
   );
 }
 
-function MobileDashboardView({ greeting, today, announcements, loading }) {
+function MobileDashboardView({ greeting, today, announcements, loading, classInfo }) {
   const formattedDate = today.toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'short',
@@ -72,6 +72,27 @@ function MobileDashboardView({ greeting, today, announcements, loading }) {
         </div>
         <AnnouncementsWidget announcements={announcements} loading={loading} variant="compact" limit={3} />
       </div>
+
+      {/* Class Details */}
+      {classInfo && (
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-xl p-4 shadow-sm">
+          <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+            👥 Class Details
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {classInfo.map((row) => (
+              <div key={row.label}>
+                <p className="text-[10px] font-semibold text-blue-600 uppercase tracking-wide mb-0.5">
+                  {row.label}
+                </p>
+                <p className="text-sm font-bold text-gray-900">
+                  {row.value}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
     </div>
   );

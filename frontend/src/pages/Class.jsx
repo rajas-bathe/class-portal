@@ -23,8 +23,8 @@ function Class() {
             <p className="text-sm font-bold text-gray-900">{classInfo.className} - {classInfo.division}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500">Class Teacher</p>
-            <p className="text-sm font-bold text-gray-900">{classInfo.classTeacher}</p>
+            <p className="text-xs text-gray-500">Branch</p>
+            <p className="text-sm font-bold text-gray-900">{classInfo.branch || 'Computer Engineering'}</p>
           </div>
           <div>
             <p className="text-xs text-gray-500">Total Students</p>
