@@ -3,7 +3,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 function MobileSchedule({ days, periods, today, getFilteredItemsForPeriod }) {
   // Find today's index
   const todayIndex = days.indexOf(today);
-  const [currentIndex, setCurrentIndex] = useState(todayIndex);
+  const [currentIndex, setCurrentIndex] = useState(todayIndex >= 0 ? todayIndex : 0);
 
   const getDayItems = (day) => {
     const items = [];
@@ -103,6 +103,7 @@ function MobileSchedule({ days, periods, today, getFilteredItemsForPeriod }) {
   const hasClasses = dayItems.some((entry) => !entry.isBreak);
 
   const isClassLive = (time) => {
+    if (!isToday) return false;
     const now = new Date();
     const currentTime = now.toTimeString().slice(0, 5);
     const [start, end] = time.split('-');
@@ -191,23 +192,38 @@ function MobileSchedule({ days, periods, today, getFilteredItemsForPeriod }) {
         </div>
       </div>
 
-      {/* Schedule Cards — consecutive periods with identical class(es) are
-          already merged into one block by groupConsecutivePeriods, so a
-          2-hour lecture renders as a single card, not two stacked ones.
-          Break periods render as their own flat grey band. */}
+      {/* Schedule Card — All periods and break unified inside a single cohesive container */}
       {hasClasses ? (
-        <div className="space-y-3">
+        <div className="bg-white border-2 border-gray-800 rounded-xl overflow-hidden shadow-sm divide-y-2 divide-gray-800">
+          {/* Top Header Strip (Grey Rectangle) */}
+          <div className="bg-gray-100 px-4 py-2.5 flex items-center justify-between">
+            <span className="text-sm font-bold text-gray-900 flex items-center gap-2">
+              📅 {selectedDay}&apos;s Schedule
+            </span>
+            {isToday ? (
+              <span className="text-[11px] font-bold text-green-700 bg-green-100 border border-green-300 px-2 py-0.5 rounded-full flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+                Today
+              </span>
+            ) : (
+              <span className="text-xs font-medium text-gray-500">
+                {dayBlocks.filter((b) => !b.isBreak).length} {dayBlocks.filter((b) => !b.isBreak).length === 1 ? 'Slot' : 'Slots'}
+              </span>
+            )}
+          </div>
+
+          {/* Schedule Blocks */}
           {dayBlocks.map((block) => {
             if (block.isBreak) {
               return (
                 <div
-                  key={block.periodStart}
-                  className="bg-gray-200 border-2 border-gray-800 rounded-xl px-4 py-3 flex items-center justify-between"
+                  key={`break-${block.periodStart}`}
+                  className="bg-gray-200 px-4 py-2.5 flex items-center justify-between"
                 >
-                  <span className="text-sm font-bold text-gray-900">
+                  <span className="text-xs sm:text-sm font-bold text-gray-800 font-mono">
                     {block.time}
                   </span>
-                  <span className="text-xs font-bold tracking-widest text-gray-600">
+                  <span className="text-xs font-extrabold tracking-widest text-gray-600 uppercase">
                     BREAK
                   </span>
                 </div>
@@ -227,40 +243,35 @@ function MobileSchedule({ days, periods, today, getFilteredItemsForPeriod }) {
               <div 
                 key={block.periodStart} 
                 className={`
-                  bg-white border-2 rounded-xl overflow-hidden
-                  ${isLive ? 'border-green-500 shadow-lg shadow-green-100' : 'border-gray-800'}
-                  transition-all duration-200
+                  transition-colors duration-150
+                  ${isLive ? 'bg-yellow-50/70 border-l-4 border-l-green-500' : 'bg-white'}
                 `}
               >
                 {/* Block Header */}
                 <div className={`
-                  flex items-center justify-between px-4 py-2.5
-                  ${isLive ? 'bg-green-50' : 'bg-gray-100'}
-                  border-b-2 ${isLive ? 'border-green-500' : 'border-gray-800'}
+                  flex items-center justify-between px-4 py-2
+                  ${isLive ? 'bg-yellow-100/70 border-b border-yellow-200' : 'bg-gray-50 border-b border-gray-200'}
                 `}>
-                  <div className="flex items-center gap-2.5">
-                    <span className="text-sm font-bold text-gray-900">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs sm:text-sm font-bold text-gray-900 font-mono">
                       {block.time}
                     </span>
                     {isLive && (
-                      <span className="flex items-center gap-1 text-[10px] font-bold text-green-600">
+                      <span className="flex items-center gap-1 text-[10px] font-bold text-green-700 bg-white border border-green-400 px-1.5 py-0.5 rounded-full">
                         <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
                         LIVE
                       </span>
                     )}
                   </div>
-                  <span className="text-xs font-medium text-gray-600">
+                  <span className="text-[11px] sm:text-xs font-semibold text-gray-600">
                     {periodLabel}
                   </span>
                 </div>
 
-                {/* Class Items — no nested box; single flat area, split only
-                    when batches actually differ. The unified block gets an
-                    invisible label placeholder (same size as the real "A"/"B"
-                    badge) so both card shapes are the same height. */}
+                {/* Class Items */}
                 {isUnified ? (
-                  <div className="p-3 flex flex-col items-center text-center">
-                    <span className="text-[10px] font-bold text-transparent mb-1 select-none" aria-hidden="true">A</span>
+                  <div className="p-3.5 flex flex-col items-center text-center">
+                    <span className="text-[10px] font-bold text-transparent mb-0.5 select-none" aria-hidden="true">A</span>
                     <div className="text-sm font-bold text-gray-900">
                       {getShortSubject(block.items[0].subject)}
                     </div>
@@ -269,14 +280,14 @@ function MobileSchedule({ days, periods, today, getFilteredItemsForPeriod }) {
                     </div>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 divide-x-2 divide-gray-300">
+                  <div className="grid grid-cols-2 divide-x-2 divide-gray-200">
                     {block.items.map((item, idx) => {
                       const batch = item.batch || 'A';
                       const shortName = getShortSubject(item.subject);
                       return (
                         <div key={idx} className="p-3 flex flex-col items-center text-center">
-                          <span className="text-[10px] font-bold text-gray-500 mb-1">
-                            {batch}
+                          <span className="text-[10px] font-bold text-gray-500 mb-0.5">
+                            Batch {batch}
                           </span>
                           <div className="text-sm font-bold text-gray-900">
                             {shortName}

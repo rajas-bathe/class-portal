@@ -4,7 +4,8 @@ import { periods } from '../data/timetableData';
 
 export const getAllPeriods = () => periods;
 
-export const isCurrentPeriod = (time) => {
+export const isCurrentPeriod = (time, day = null) => {
+  if (day && day !== getToday()) return false;
   const now = new Date();
   const currentTimeStr = now.toTimeString().slice(0, 5);
   const [start, end] = time.split('-');
@@ -54,8 +55,9 @@ export const isLab = (subject) => subject?.includes('Lab');
 // ----- DATE HELPERS -----
 
 export const getToday = () => {
-  const today = new Date().getDay();
+  const day = new Date().getDay();
   const dayMap = { 
+    0: 'Sunday',
     1: 'Monday', 
     2: 'Tuesday', 
     3: 'Wednesday', 
@@ -63,7 +65,7 @@ export const getToday = () => {
     5: 'Friday',
     6: 'Saturday' 
   };
-  return dayMap[today] || 'Monday';
+  return dayMap[day] || 'Sunday';
 };
 
 // ----- BATCH HELPERS -----

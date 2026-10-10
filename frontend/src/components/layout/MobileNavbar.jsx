@@ -22,7 +22,7 @@ function MobileNavbar() {
           ☰
         </button>
 
-        <h1 className="text-2xl font-bold text-gray-800">Class Portal</h1>
+        <h1 className="text-2xl font-bold text-gray-800">Class Sync</h1>
 
         <span className="text-sm font-medium text-gray-800">
           {formattedDate}

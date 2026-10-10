@@ -1,29 +1,52 @@
-export const examTypes = ['mse', 'ese', 'ciap'];
+export const examTypes = ['mse', 'ese', 'espe'];
 
 export const examData = {
   mse: {
-    name: 'Mid Semester Exam (MSE)',
+    name: 'Mid Semester Examination (MSE) — SH 2026',
+    isLocked: false,
+    timing: '10:30 am – 11:30 am',
     schedule: [
-      { subject: 'Operating System', date: '25/07/2026', time: '10:00 AM', syllabus: 'Chapter 1-5' },
-      { subject: 'Microprocessor', date: '28/07/2026', time: '10:00 AM', syllabus: 'Chapter 3-7' },
-      { subject: 'Foundation of Embedded System', date: '30/07/2026', time: '02:00 PM', syllabus: 'Chapter 1-4' },
-    ]
+      {
+        day: 'Monday',
+        date: '28/09/2026',
+        time: '10:30 am – 11:30 am',
+        subject: 'Operating System',
+        code: 'OS',
+      },
+      {
+        day: 'Tuesday',
+        date: '29/09/2026',
+        time: '10:30 am – 11:30 am',
+        subject: 'Data Structures',
+        code: 'DS',
+      },
+      {
+        day: 'Wednesday',
+        date: '30/09/2026',
+        time: '10:30 am – 11:30 am',
+        subject: 'Foundation of Embedded System',
+        code: 'FES',
+      },
+    ],
   },
   ese: {
-    name: 'End Semester Exam (ESE)',
+    name: 'End Semester Theory Examination (ESE)',
+    isLocked: true,
+    approxTime: 'Mid to Late November',
     schedule: [
-      { subject: 'Operating System', date: '15/11/2026', time: '10:00 AM', syllabus: 'Full Syllabus' },
-      { subject: 'Microprocessor', date: '18/11/2026', time: '10:00 AM', syllabus: 'Full Syllabus' },
-      { subject: 'Foundation of Embedded System', date: '20/11/2026', time: '02:00 PM', syllabus: 'Full Syllabus' },
-      { subject: 'Engineering Career Navigation', date: '22/11/2026', time: '10:00 AM', syllabus: 'Full Syllabus' },
-    ]
+      { subject: 'Operating System', code: 'OS', date: 'TBA', time: 'TBA' },
+      { subject: 'Data Structures', code: 'DS', date: 'TBA', time: 'TBA' },
+      { subject: 'Foundation of Embedded System', code: 'FES', date: 'TBA', time: 'TBA' },
+    ],
   },
-  ciap: {
-    name: 'Continuous Internal Assessment (CIAP)',
+  espe: {
+    name: 'End Semester Practical Examination (ESPE)',
+    isLocked: true,
+    approxTime: 'Mid to Late November',
     schedule: [
-      { subject: 'Operating System', date: '10/08/2026', time: '11:00 AM', syllabus: 'Quiz 1' },
-      { subject: 'Microprocessor', date: '12/08/2026', time: '11:00 AM', syllabus: 'Quiz 1' },
-      { subject: 'Foundation of Embedded System', date: '14/08/2026', time: '11:00 AM', syllabus: 'Quiz 1' },
-    ]
-  }
+      { subject: 'Operating System Practical', code: 'OS Lab', date: 'TBA', time: 'TBA' },
+      { subject: 'Data Structures Practical', code: 'DS Lab', date: 'TBA', time: 'TBA' },
+      { subject: 'Microprocessor Practical', code: 'MP Lab', date: 'TBA', time: 'TBA' },
+    ],
+  },
 };

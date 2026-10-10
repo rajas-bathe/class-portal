@@ -3,7 +3,9 @@ import React from 'react';
 function ViewToggle({ viewMode, setViewMode }) {
   return (
     
-    <div className="w-full sm:w-auto flex border-2 border-gray-800 rounded-lg overflow-hidden bg-white">
+    <div>
+      {/* 
+      <div className="w-full sm:w-auto flex border-2 border-gray-800 rounded-lg overflow-hidden bg-white">
       <button
         onClick={() => setViewMode('lectures')}
         className={`
@@ -17,7 +19,7 @@ function ViewToggle({ viewMode, setViewMode }) {
         📚 Lectures
       </button>
 
-      {/* <button
+      <button
         onClick={() => setViewMode('labs')}
         className={`
           flex-1 px-3 py-2 text-sm font-medium transition-all duration-150

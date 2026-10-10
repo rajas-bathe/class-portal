@@ -215,26 +215,31 @@ function TimetableGrid({
               }
 
               const isCurrent = isCurrentPeriod(period.time);
+              const isPeriodActiveToday = isCurrent && days.includes(today);
+
               return (
                 <tr key={period.number} className={`
                   ${rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
-                  ${isCurrent ? 'bg-yellow-100' : ''}
                   border-b border-gray-300
                 `}>
                   {/* Period Number */}
                   <td className={`
                     p-1.5 md:p-3 text-center font-bold text-gray-900 sticky left-0
-                    ${rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
-                    ${isCurrent ? 'bg-yellow-100' : ''}
+                    ${isPeriodActiveToday ? 'bg-yellow-100' : (rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50')}
                     z-10 border-r-2 border-gray-800
                     text-xs md:text-sm
                   `}>
                     {period.number}
-                    {isCurrent && <span className="block text-[6px] md:text-[8px] text-green-700 font-bold">● LIVE</span>}
+                    {isPeriodActiveToday && (
+                      <span className="block text-[6px] md:text-[8px] text-green-700 font-bold">● LIVE</span>
+                    )}
                   </td>
 
                   {/* Time */}
-                  <td className="p-1.5 md:p-3 text-center font-medium text-gray-800 border-r-2 border-gray-800 text-xs md:text-sm">
+                  <td className={`
+                    p-1.5 md:p-3 text-center font-medium text-gray-800 border-r-2 border-gray-800 text-xs md:text-sm
+                    ${isPeriodActiveToday ? 'bg-yellow-50' : (rowIndex % 2 === 0 ? 'bg-white' : 'bg-gray-50')}
+                  `}>
                     {period.time}
                   </td>
 
@@ -246,20 +251,38 @@ function TimetableGrid({
                   {days.map((day) => {
                     const { grouped, unified, rowSpan, skip, rowSpanFor, skipSlot } = dayColumns[day];
                     const isToday = day === today;
-                    const bg = isToday ? 'bg-gray-100' : '';
-                    const bgCurrent = isCurrent && isToday ? 'bg-yellow-100' : '';
+
+                    const isSpanCurrent = (span) => {
+                      if (!isToday || rowIndex < 0 || rowIndex >= periods.length) return false;
+                      const start = periods[rowIndex].time.split('-')[0];
+                      const endIdx = Math.min(periods.length - 1, rowIndex + (span || 1) - 1);
+                      const end = periods[endIdx].time.split('-')[1];
+                      const now = new Date();
+                      const currentTime = now.toTimeString().slice(0, 5);
+                      return start <= currentTime && end >= currentTime;
+                    };
 
                     if (unified[rowIndex]) {
                       if (skip[rowIndex]) return null; // covered by a rowSpan above
+                      const span = rowSpan[rowIndex];
+                      const isLiveCell = isSpanCurrent(span);
+                      const cellBg = isLiveCell
+                        ? 'bg-yellow-100 font-medium'
+                        : isToday
+                        ? 'bg-gray-100'
+                        : rowIndex % 2 === 0
+                        ? 'bg-white'
+                        : 'bg-gray-50';
+
                       const item = grouped[rowIndex].A; // representative (A === B content), or null
                       return (
                         <td
                           key={`${day}-${period.number}`}
                           colSpan={2}
-                          rowSpan={rowSpan[rowIndex]}
+                          rowSpan={span}
                           className={`
                             p-1 md:p-1.5 align-middle text-center
-                            ${bg} ${bgCurrent}
+                            ${cellBg}
                             border-r-2 border-gray-800 last:border-r-0
                             text-[10px] md:text-sm
                           `}
@@ -275,6 +298,24 @@ function TimetableGrid({
                     const skipB = skipSlot[rowIndex].B;
                     const spanA = rowSpanFor[rowIndex].A;
                     const spanB = rowSpanFor[rowIndex].B;
+                    const isLiveA = isSpanCurrent(spanA);
+                    const isLiveB = isSpanCurrent(spanB);
+
+                    const cellBgA = isLiveA
+                      ? 'bg-yellow-100 font-medium'
+                      : isToday
+                      ? 'bg-gray-100'
+                      : rowIndex % 2 === 0
+                      ? 'bg-white'
+                      : 'bg-gray-50';
+
+                    const cellBgB = isLiveB
+                      ? 'bg-yellow-100 font-medium'
+                      : isToday
+                      ? 'bg-gray-100'
+                      : rowIndex % 2 === 0
+                      ? 'bg-white'
+                      : 'bg-gray-50';
 
                     return (
                       <React.Fragment key={`${day}-${period.number}`}>
@@ -283,7 +324,7 @@ function TimetableGrid({
                             rowSpan={spanA}
                             className={`
                               p-1 md:p-1.5 align-middle
-                              ${bg} ${bgCurrent}
+                              ${cellBgA}
                               border-r border-gray-300
                               text-[10px] md:text-sm
                             `}
@@ -303,7 +344,7 @@ function TimetableGrid({
                             rowSpan={spanB}
                             className={`
                               p-1 md:p-1.5 align-middle
-                              ${bg} ${bgCurrent}
+                              ${cellBgB}
                               border-r-2 border-gray-800 last:border-r-0
                               text-[10px] md:text-sm
                             `}

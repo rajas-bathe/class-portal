@@ -7,17 +7,17 @@ import DesktopDashboardView from '../components/dashboard/DesktopDashboardView';
 // Mirrors the Academics.jsx pattern: hooks run once here,
 // mobile/desktop are pure presentational components underneath.
 function Dashboard() {
-  const { items: announcements } = useAnnouncementsAirtable();
+  const { items: announcements, loading: announcementsLoading } = useAnnouncementsAirtable();
 
   const today = new Date();
   const hour = today.getHours();
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
-  // Static reference data — replace with real data source (exam schedule, class info)
+  // Static reference data — matching official MSE timetable
   const examDates = [
-    { label: 'MSE — Operating system', date: '25 Jul' },
-    { label: 'MSE — Microprocessor', date: '28 Jul' },
-    { label: 'MSE — Embedded systems', date: '30 Jul' },
+    { label: 'MSE — Operating System', date: '28 Sep' },
+    { label: 'MSE — Data Structures', date: '29 Sep' },
+    { label: 'MSE — Foundation of Embedded System', date: '30 Sep' },
   ];
 
   const classInfo = [
@@ -35,6 +35,7 @@ function Dashboard() {
           greeting={greeting}
           today={today}
           announcements={announcements}
+          loading={announcementsLoading}
         />
       </div>
 
@@ -44,6 +45,7 @@ function Dashboard() {
           greeting={greeting}
           today={today}
           announcements={announcements}
+          loading={announcementsLoading}
           examDates={examDates}
           classInfo={classInfo}
         />
