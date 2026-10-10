@@ -11,7 +11,7 @@ function MoonIcon() {
   );
 }
 
-function MobileDashboardView({ greeting, today, announcements }) {
+function MobileDashboardView({ greeting, today, announcements, loading }) {
   const formattedDate = today.toLocaleDateString('en-US', {
     weekday: 'long',
     month: 'short',
@@ -70,7 +70,7 @@ function MobileDashboardView({ greeting, today, announcements }) {
             View all →
           </Link>
         </div>
-        <AnnouncementsWidget announcements={announcements} variant="compact" limit={3} />
+        <AnnouncementsWidget announcements={announcements} loading={loading} variant="compact" limit={3} />
       </div>
 
     </div>

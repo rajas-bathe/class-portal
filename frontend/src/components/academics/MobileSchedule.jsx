@@ -233,10 +233,6 @@ function MobileSchedule({ days, periods, today, getFilteredItemsForPeriod }) {
             }
 
             const isLive = isClassLive(block.time);
-            const periodLabel =
-              block.periodStart === block.periodEnd
-                ? `Period ${block.periodStart}`
-                : `Period ${block.periodStart}-${block.periodEnd}`;
             const isUnified =
               block.items.length === 1 ||
               (block.items.length === 2 && keyOf(block.items[0]) === keyOf(block.items[1]));
@@ -265,9 +261,6 @@ function MobileSchedule({ days, periods, today, getFilteredItemsForPeriod }) {
                       </span>
                     )}
                   </div>
-                  <span className="text-[11px] sm:text-xs font-semibold text-gray-600">
-                    {periodLabel}
-                  </span>
                 </div>
 
                 {/* Class Items */}

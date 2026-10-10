@@ -75,9 +75,35 @@ function AnnouncementRow({ item, thumbSize }) {
   );
 }
 
-function AnnouncementsWidget({ announcements = [], variant = 'compact', limit = 3 }) {
+function AnnouncementSkeleton({ thumbSize }) {
+  return (
+    <div className="flex gap-3 bg-white border-2 border-gray-200 rounded-xl p-3.5 animate-pulse">
+      <div className={`${thumbSize} flex-shrink-0 rounded-lg bg-gray-200`} />
+      <div className="flex-1 min-w-0 flex flex-col justify-center space-y-2">
+        <div className="flex justify-between items-center gap-2">
+          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          <div className="h-4 bg-gray-200 rounded-full w-14"></div>
+        </div>
+        <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+        <div className="h-2.5 bg-gray-200 rounded w-1/3"></div>
+      </div>
+    </div>
+  );
+}
+
+function AnnouncementsWidget({ announcements = [], loading = false, variant = 'compact', limit = 3 }) {
   const items = announcements.slice(0, limit);
   const thumbSize = variant === 'full' ? 'w-[88px] h-[68px]' : 'w-[52px] h-[52px]';
+
+  if (loading) {
+    return (
+      <div className="flex flex-col gap-3">
+        {Array.from({ length: limit }).map((_, idx) => (
+          <AnnouncementSkeleton key={idx} thumbSize={thumbSize} />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div>

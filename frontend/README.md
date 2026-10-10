@@ -1,4 +1,4 @@
-# 📚 Class Portal
+# 📚 Class Post
 
 > ⚠️ **Work in Progress** — This project is currently under active development.
 
@@ -12,7 +12,7 @@
 
 ## 📖 About
 
-A modern class portal built using **React**, **Vite**, and **Tailwind CSS** to provide students with quick access to academic resources and class information.
+A modern class post portal built using **React**, **Vite**, and **Tailwind CSS** to provide students with quick access to academic resources and class information.
 
 ---
 

@@ -40,7 +40,7 @@ function MobileNavbar() {
 
         {/* Brand Title */}
         <h1 className="text-lg font-bold text-gray-900 tracking-tight">
-          Class Portal
+          Class Post
         </h1>
 
         {/* Date and Day stacked vertically */}

@@ -4,7 +4,7 @@ import QuickLinks from './QuickLinks';
 import AnnouncementsWidget from './AnnouncementsWidget';
 
 
-function DesktopDashboardView({ greeting, today, announcements, examDates, classInfo }) {
+function DesktopDashboardView({ greeting, today, announcements, loading, examDates, classInfo }) {
   const formattedDate = today.toLocaleDateString('en-US', {
     weekday: 'long',
     day: 'numeric',
@@ -42,7 +42,7 @@ function DesktopDashboardView({ greeting, today, announcements, examDates, class
                 View all →
               </Link>
             </div>
-            <AnnouncementsWidget announcements={announcements} variant="full" limit={3} />
+            <AnnouncementsWidget announcements={announcements} loading={loading} variant="full" limit={3} />
           </div>
         </div>
 

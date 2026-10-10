@@ -7,7 +7,7 @@ function About() {
       {/* Header */}
       <div className="border-b-2 border-gray-800 pb-4">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900 tracking-tight">👨‍💻 About</h1>
-        <p className="text-sm text-gray-500 mt-1">Class Portal — Built for students, by a student</p>
+        <p className="text-sm text-gray-500 mt-1">Class Post — Built for students, by a student</p>
       </div>
 
       {/* Developer Card */}
@@ -29,9 +29,9 @@ function About() {
 
       {/* About Project */}
       <div className="bg-white border-2 border-gray-800 rounded-xl p-6">
-        <h3 className="text-lg font-bold text-gray-900 mb-3">📖 About Class Portal</h3>
+        <h3 className="text-lg font-bold text-gray-900 mb-3">📖 About Class Post</h3>
         <p className="text-gray-700 text-sm leading-relaxed">
-          Class Portal is a student‑facing web application that centralizes academic resources, 
+          Class Post is a student‑facing web application that centralizes academic resources, 
           class schedules, announcements, and important documents in one place. It's designed 
           to help students manage their academic life more efficiently.
         </p>
@@ -81,7 +81,7 @@ function About() {
 
       {/* Footer */}
       <div className="text-center text-xs text-gray-400 pt-4 border-t border-gray-200">
-        © 2026 Class Portal · Built with ❤️ by Rajas Bathe
+        © 2026 Class Post · Built with ❤️ by Rajas Bathe
       </div>
     </div>
   );
